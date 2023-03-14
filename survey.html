@@ -89,6 +89,7 @@
                   >
                 </div>
               </div>
+              <!--
               <div class="img-input-box">
                 <span class="img-valid-icon">
                   <img
@@ -109,6 +110,32 @@
                 <div style="height: 0px; width: 0px; overflow: hidden">
                   <input id="upfile" type="file" value="upload" />
                 </div>
+              </div>-->
+              <div class="input--groups__file">
+                <span class="img-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="img-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <p class="input-group__label">პირადი ფოტოს ატვირთვა</p>
+                <div class="position--div">
+                  <label for="image">
+                    ატვირთვა
+                    <input
+                      id="image"
+                      type="file"
+                      name="image"
+                      style="display: none"
+                    />
+                  </label>
+                </div>
               </div>
               <div class="input-field about-field">
                 <label class="label-top" for="about-me"
@@ -120,6 +147,7 @@
                   name="about"
                 ></textarea>
               </div>
+
               <div class="input-field input-email-field">
                 <span class="email-valid-icon">
                   <img
@@ -383,9 +411,7 @@
               </div>
             </div>
           </div>
-          <div class="img-container">
-            <img id="preview" src="" />
-          </div>
+          <div class="resume--photo"></div>
         </div>
         <div class="experience_display">
           <div class="grey-line"></div>
