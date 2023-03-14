@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Redberry</title>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="back-main-page-btn-container">
+        <button class="back-main-page-btn" onclick="goToLanding()">
+          <svg
+            width="10"
+            height="16"
+            viewBox="0 0 10 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="btn-arrow"
+          >
+            <path
+              d="M8.85769 0.352185C9.0832 0.577756 9.20988 0.883657 9.20988 1.20262C9.20988 1.52157 9.0832 1.82747 8.85769 2.05305L2.90348 8.00726L8.85769 13.9615C9.0768 14.1883 9.19805 14.4922 9.19531 14.8076C9.19257 15.123 9.06606 15.4247 8.84304 15.6477C8.62002 15.8707 8.31832 15.9972 8.00293 16C7.68754 16.0027 7.3837 15.8815 7.15683 15.6623L0.352185 8.85769C0.126681 8.63212 0 8.32622 0 8.00726C0 7.6883 0.126681 7.3824 0.352185 7.15683L7.15683 0.352185C7.3824 0.126681 7.6883 0 8.00726 0C8.32622 0 8.63212 0.126681 8.85769 0.352185Z"
+              fill="#2E2E2E"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="left">
+        <form id="form">
+          <div class="first-page">
+            <header>
+              <div class="header-container">
+                <h2 class="header-heading">პირადი ინფო</h2>
+                <span>1/3</span>
+              </div>
+              <div class="border-line"></div>
+            </header>
+            <div class="form-container">
+              <div class="full-name-fields">
+                <div class="input-field">
+                  <span class="name-valid-icon">
+                    <img
+                      src="assets/images/icons/valid-icon.svg"
+                      alt="valid icon"
+                    />
+                  </span>
+                  <span class="name-invalid-icon">
+                    <img
+                      src="assets/images/icons/invalid-icon.svg"
+                      alt="invalid icon"
+                    />
+                  </span>
+                  <label class="label-top name-label" for="name">სახელი</label>
+                  <input
+                    id="name"
+                    class="input"
+                    type="text"
+                    placeholder="ანზორ"
+                  />
+                  <label class="label-bottom"
+                    >მინიმუმ 2 ასო, ქართული ასოები</label
+                  >
+                </div>
+                <div class="input-field">
+                  <span class="lastname-valid-icon">
+                    <img
+                      src="assets/images/icons/valid-icon.svg"
+                      alt="valid icon"
+                    />
+                  </span>
+                  <span class="lastname-invalid-icon">
+                    <img
+                      src="assets/images/icons/invalid-icon.svg"
+                      alt="invalid icon"
+                    />
+                  </span>
+                  <label class="label-top lastname-label" for="lastName"
+                    >გვარი</label
+                  >
+                  <input
+                    id="lastName"
+                    class="input"
+                    type="text"
+                    placeholder="მუმლაძე"
+                  />
+                  <label class="label-bottom"
+                    >მინიმუმ 2 ასო, ქართული ასოები</label
+                  >
+                </div>
+              </div>
+              <div class="img-input-box">
+                <span class="img-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="img-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label class="label-top" for="upfile"
+                  >პირადი ფოტოს ატვირთვა</label
+                >
+                <div id="uploadBtn" class="upload-btn">ატვირთვა</div>
+                <div style="height: 0px; width: 0px; overflow: hidden">
+                  <input id="upfile" type="file" value="upload" />
+                </div>
+              </div>
+              <div class="input-field about-field">
+                <label class="label-top" for="about-me"
+                  >ჩემ შესახებ (არასავალდებულო)</label
+                >
+                <textarea
+                  id="about-me"
+                  class="input about-input"
+                  name="about"
+                ></textarea>
+              </div>
+              <div class="input-field input-email-field">
+                <span class="email-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="email-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label id="email-label" class="label-top" for="email"
+                  >ელ.ფოსტა</label
+                >
+                <input
+                  id="email"
+                  class="input input-email"
+                  type="email"
+                  placeholder="anzorr666@redberry.ge"
+                />
+                <label class="label-bottom"
+                  >უნდა მთავრდებოდეს @redberry.ge-ით</label
+                >
+              </div>
+              <div class="input-field input-number-field">
+                <span class="number-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="number-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label class="label-top number-label" for="phone-number"
+                  >მობილურის ნომერი</label
+                >
+                <input
+                  id="phone-number"
+                  class="input input-phone-number"
+                  type="tel"
+                  name="phone"
+                  placeholder="+995 551 12 34 56"
+                  maxlength="17"
+                />
+                <label class="label-bottom"
+                  >უნდა აკმაყოფილებდეს ქართული მობილურის ნომრის ფორმატს</label
+                >
+              </div>
+              <div class="next-btn-container">
+                <button class="btn next-btn">შემდეგი</button>
+              </div>
+            </div>
+          </div>
+          <div class="second-page">
+            <header>
+              <div class="header-container">
+                <h2 class="header-heading">გამოცდილება</h2>
+                <span>2/3</span>
+              </div>
+              <div class="border-line"></div>
+            </header>
+            <div class="form-container">
+              <div class="input-field">
+                <span class="position-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="position-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label class="label-top label-position" for="position-input"
+                  >თანამდებობა</label
+                >
+                <input
+                  class="input position-input"
+                  type="text"
+                  placeholder="თანამდებობა"
+                />
+                <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+              </div>
+              <div class="input-field employer">
+                <span class="employer-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="employer-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label class="label-top label-employer" for="employer-input"
+                  >დამსაქმებელი</label
+                >
+                <input
+                  class="input employer-input"
+                  type="text"
+                  placeholder="დამსაქმებელი"
+                />
+                <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+              </div>
+              <div class="date-container">
+                <div class="input-field left-date">
+                  <label class="label-top label-start-date" for="startdate"
+                    >დაწყების რიცხვი</label
+                  >
+                  <input id="startdate" type="date" class="date start_date" />
+                </div>
+                <div class="input-field right-date">
+                  <label class="label-top label-end-date" for="end-date"
+                    >დამთავრების რიცხვი</label
+                  >
+                  <input type="date" id="end-date" class="date end_date" />
+                </div>
+              </div>
+              <div class="input-field about-field">
+                <label class="label-top label-description" for="description"
+                  >აღწერა</label
+                >
+                <textarea
+                  class="input about-input description"
+                  name="about"
+                  placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+                ></textarea>
+              </div>
+              <div class="border-grey-line"></div>
+            </div>
+            <div class="moreExp"></div>
+            <div class="more-experience-btn-container">
+              <button class="more-btn more-experience-btn">
+                მეტი გამოცდილების დამატება
+              </button>
+            </div>
+            <div class="btn-container">
+              <button class="btn back-btn">უკან</button>
+              <button class="btn next-second-btn">შემდეგი</button>
+            </div>
+          </div>
+          <div class="third-page">
+            <header>
+              <div class="header-container">
+                <h2 class="header-heading">განათლება</h2>
+                <span>3/3</span>
+              </div>
+              <div class="border-line"></div>
+            </header>
+            <div class="form-container">
+              <div class="input-field school-field">
+                <span class="school-valid-icon">
+                  <img
+                    src="assets/images/icons/valid-icon.svg"
+                    alt="valid icon"
+                  />
+                </span>
+                <span class="school-invalid-icon">
+                  <img
+                    src="assets/images/icons/invalid-icon.svg"
+                    alt="invalid icon"
+                  />
+                </span>
+                <label class="label-top school-label" for="education"
+                  >სასწავლებელი</label
+                >
+                <input
+                  id="education"
+                  class="input school"
+                  type="text"
+                  placeholder="სასწავლებელი"
+                />
+                <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+              </div>
+              <div class="select-container">
+                <div class="input-field">
+                  <label for="select" class="label-top quality-label"
+                    >ხარისხი</label
+                  >
+                  <select class="select" name="selected">
+                    <option value="" disabled selected>აირჩიე ხარისხი</option>
+                    <option value="სტუდენტი">სტუდენტი</option>
+                    <option value="ბაკალავრი">ბაკალავრი</option>
+                    <option value="მაგისტრი">მაგისტრი</option>
+                    <option value="დოქტორი">დოქტორი</option>
+                  </select>
+                </div>
+                <div class="input-field right-date">
+                  <label class="label-top date-label" for="date"
+                    >დამთავრების რიცხვი</label
+                  >
+                  <input id="date" type="date" class="date end--date" />
+                </div>
+              </div>
+              <div class="input-field about-field">
+                <label
+                  class="label-top education-description-label"
+                  for="description"
+                  >აღწერა</label
+                >
+                <textarea
+                  class="input education-description"
+                  name="about"
+                  placeholder="განათლების აღწერა"
+                ></textarea>
+              </div>
+              <div class="border-grey-line"></div>
+            </div>
+            <div class="more-exp"></div>
+            <div class="more-experience-btn-container">
+              <button class="more-btn another-school-btn">
+                სხვა სასწავლებლის დამატება
+              </button>
+            </div>
+            <div class="btn-container">
+              <button class="btn back-second-btn">უკან</button>
+              <button class="btn finish-btn">დასრულება</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="right">
+        <div class="header-display-container">
+          <div class="container">
+            <div class="full-name">
+              <div id="name_display"></div>
+              <div id="lastname_display"></div>
+            </div>
+            <div class="content-container">
+              <div id="email_display">
+                <span class="email-icon">
+                  <img
+                    src="assets/images/icons/email-icon.svg"
+                    alt="email icon"
+                  />
+                </span>
+                <span class="email-text"></span>
+              </div>
+              <div id="phone_display">
+                <span class="phone-icon">
+                  <img
+                    src="assets/images/icons/phone-icon.svg"
+                    alt="phone icon"
+                  />
+                </span>
+                <span class="phone-text"></span>
+              </div>
+              <div id="about_me_display">
+                <h4 class="about_me-title">ჩემ შესახებ</h4>
+                <p class="about_me-text"></p>
+              </div>
+            </div>
+          </div>
+          <div class="img-container">
+            <img id="preview" src="" />
+          </div>
+        </div>
+        <div class="experience_display">
+          <div class="grey-line"></div>
+          <h4 class="experince-title">გამოცდილება</h4>
+          <div class="experience-content">
+            <p class="position-display"></p>
+            <p class="employer-display"></p>
+          </div>
+          <div class="date-content">
+            <span class="date-start-display"></span>
+            <span class="date-end-display"></span>
+          </div>
+          <div class="description-content">
+            <p class="description-display"></p>
+          </div>
+        </div>
+        <div class="education">
+          <div class="education-grey-line"></div>
+          <h4 class="education-title">განათლება</h4>
+          <div class="education-content">
+            <p class="school-display"></p>
+            <p class="quality-display"></p>
+          </div>
+          <div class="date-display-container">
+            <p class="date-display"></p>
+          </div>
+          <div class="education-description-content">
+            <p class="education-description-display"></p>
+          </div>
+        </div>
+        <div class="bottom-left">
+          <img src="assets/images/icons/star-logo.svg" alt="star logo" />
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
