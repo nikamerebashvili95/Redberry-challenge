@@ -1,0 +1,56 @@
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url(“./assets/fonts/HelveticaNeue.ttc”) format(“truetype”);
+}
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "HelveticaNeue";
+  width: 1920px;
+  background-image: url("./assets/images/background/bg.png");
+  background-repeat: no-repeat;
+  height: 100%;
+}
+.main-container {
+  position: relative;
+}
+.logo-container {
+  margin-top: 25px;
+  padding-left: 70px;
+}
+.border-line {
+  max-width: 100%;
+  border: 1px solid #1a1a1a;
+  margin: 26px 70px 0 70px;
+}
+.add-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 424px;
+}
+.transformation-logo-box {
+  position: absolute;
+  top: 54%;
+  right: 20%;
+  transform: translate(-50%, 50%);
+}
+.add-btn {
+  font-family: "HelveticaNeue";
+  padding: 18px 126px;
+  border: none;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+}
