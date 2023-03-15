@@ -51,12 +51,16 @@
                       alt="invalid icon"
                     />
                   </span>
-                  <label class="label-top name-label" for="name">სახელი</label>
+                  <label class="label-top name-label" for="name" name="name"
+                    >სახელი</label
+                  >
                   <input
                     id="name"
                     class="input"
                     type="text"
                     placeholder="ანზორ"
+                    lang="ka"
+                    onkeypress="return /[\u10A0-\u10FF]/i.test(event.key)"
                   />
                   <label class="label-bottom"
                     >მინიმუმ 2 ასო, ქართული ასოები</label
@@ -83,6 +87,8 @@
                     class="input"
                     type="text"
                     placeholder="მუმლაძე"
+                    lang="ka"
+                    onkeypress="return /[\u10A0-\u10FF]/i.test(event.key)"
                   />
                   <label class="label-bottom"
                     >მინიმუმ 2 ასო, ქართული ასოები</label
@@ -133,6 +139,7 @@
                       type="file"
                       name="image"
                       style="display: none"
+                      multiple
                     />
                   </label>
                 </div>

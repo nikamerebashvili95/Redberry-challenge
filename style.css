@@ -128,7 +128,7 @@ body {
   position: relative;
 }
 .input-group__label {
-  font-weight: 500;
+  font-weight: 700;
   font-size: 16px;
   line-height: 21px;
   color: #000000;
@@ -136,6 +136,8 @@ body {
 .resume--photo {
   width: 246px;
   height: 246px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .resume--image {
   width: 100%;
