@@ -25,8 +25,9 @@ body {
   width: 1098px;
   padding: 47px 150px 65px 150px;
 }
+
 .second-page {
-  display: none;
+  display: block;
 }
 .third-page {
   display: none;

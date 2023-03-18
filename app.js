@@ -1,3 +1,60 @@
+const firstPage = document.querySelector(".first-page");
+const secondPage = document.querySelector(".second-page");
+const nextBtn = document.querySelector(".next-btn");
+const previousBtn = document.querySelector(".back-btn");
+const fileInput = document.getElementById("image");
+const imagePreview = document.querySelector(".resume--photo");
+const imgValidIcon = document.querySelector(".img-valid-icon");
+const imglInvalidIcond = document.querySelector(".img-invalid-icon");
+const nameInput = document.getElementById("name");
+const nameLabel = document.querySelector(".name-label");
+const nameValidIcon = document.querySelector(".name-valid-icon");
+const nameInvalidIcond = document.querySelector(".name-invalid-icon");
+const lastNameInput = document.getElementById("lastName");
+const lastNameLabel = document.querySelector(".lastname-label");
+const lasNameValidIcon = document.querySelector(".lastname-valid-icon");
+const lastNameInvalidIcond = document.querySelector(".lastname-invalid-icon");
+const aboutMe = document.getElementById("about-me");
+const validIcon = document.querySelector(".valid-icon");
+const emailLabel = document.getElementById("email-label");
+const emailValidIcon = document.querySelector(".email-valid-icon");
+const emailInvalidIcond = document.querySelector(".email-invalid-icon");
+var pattern = /^[a-zA-Z0-9.]+@redberry.ge$/;
+const email = document.querySelector(".input-email");
+const phoneNumber = document.querySelector(".input-phone-number");
+const numberLabel = document.querySelector(".number-label");
+const numberValidIcon = document.querySelector(".number-valid-icon");
+const numberInvalidIcond = document.querySelector(".number-invalid-icon");
+var phonePattern = /^(\+995)\s\d{3}\s\d{2}\s\d{2}\s\d{2}$/;
+const phoneNumberInp = document.getElementById("phone-number");
+const displayName = document.getElementById("name_display");
+const displayLastName = document.getElementById("lastname_display");
+const emailIcon = document.querySelector(".email-icon");
+const displayEmail = document.querySelector(".email-text");
+const aboutMeTitle = document.querySelector(".about_me-title");
+const displayAboutMe = document.querySelector(".about_me-text");
+const positionInput = document.querySelector(".position-input");
+const positionLabel = document.querySelector(".label-position");
+const positionValidIcon = document.querySelector(".position-valid-icon");
+const positionInvalidIcon = document.querySelector(".position-invalid-icon");
+const employerInput = document.querySelector(".employer-input");
+const employerLabel = document.querySelector(".label-employer");
+const employerValidIcon = document.querySelector(".employer-valid-icon");
+const employerInvalidIcon = document.querySelector(".employer-invalid-icon");
+const startDateInput = document.querySelector(".start_date");
+const endtDateInput = document.querySelector(".end_date");
+const startDateLabel = document.querySelector(".label-start-date");
+const endtDateLabel = document.querySelector(".label-end-date");
+const description = document.querySelector(".description");
+const descriptionLabel = document.querySelector(".label-description");
+const experinceTitle = document.querySelector(".experince-title");
+const displayPosition = document.querySelector(".position-display");
+const displayLine = document.querySelector(".grey-line");
+const employerPosition = document.querySelector(".employer-display");
+const startDate = document.querySelector(".date-start-display");
+const endtDate = document.querySelector(".date-end-display");
+const descriptionDisplay = document.querySelector(".description-display");
+
 // მთავარი გვერდიდან გადასვლა შესავსებ აპლიკაციაში
 function goToGeneralInfo() {
   location.href = "./survey.html";
@@ -8,9 +65,6 @@ function goToLanding() {
   localStorage.clear();
 }
 // დაკლიკებით შემდეგ პირველი გვერდიდან მეორეზე გადასვლა თუ ვალიდურია
-const firstPage = document.querySelector(".first-page");
-const secondPage = document.querySelector(".second-page");
-const nextBtn = document.querySelector(".next-btn");
 nextBtn.addEventListener("click", function (e) {
   e.preventDefault();
   let isNameValid = nameValid(),
@@ -30,7 +84,6 @@ nextBtn.addEventListener("click", function (e) {
   }
 });
 // მეორე გვერდიდან პირველზე დაბრუნება
-const previousBtn = document.querySelector(".back-btn");
 function backPage(e) {
   e.preventDefault();
   if (previousBtn) {
@@ -42,52 +95,8 @@ function backPage(e) {
   }
 }
 previousBtn.addEventListener("click", backPage);
-/***************************************************/
-/*
+
 // ფოტოს ატვირთვა და გამოჩენა მარჯვნივ
-const fileInput = document.getElementById("image");
-const imageColumn = document.querySelector(".resume--photo");
-const imgValidIcon = document.querySelector(".img-valid-icon");
-const imglInvalidIcond = document.querySelector(".img-invalid-icon");
-fileInput.addEventListener("change", updateResumeImg);
-fileInput.addEventListener("input", saveFile);
-function saveFile(e) {
-  let valid = false;
-  if (e && e.target) {
-    const image = e.target.files[0];
-    if (image && image["type"].split("/")[0] === "image") {
-      valid = true;
-      imgValidIcon.classList.add("show");
-      imglInvalidIcond.classList.remove("show");
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.addEventListener("load", () => {
-        localStorage.setItem("image", reader.result);
-      });
-    } else {
-      imgValidIcon.classList.remove("show");
-      imglInvalidIcond.classList.add("show");
-      valid = false;
-    }
-  }
-  return valid;
-}
-function updateResumeImg() {
-  const file = this.files[0];
-  const reader = new FileReader();
-  reader.addEventListener("load", function () {
-    const img = new Image();
-    img.src = reader.result;
-    imageColumn.innerHTML = `<img src=${reader.result} class='resume--image'>`;
-  });
-  reader.readAsDataURL(file);
-}
-*/
-const fileInput = document.getElementById("image");
-const imagePreview = document.querySelector(".resume--photo");
-const imgValidIcon = document.querySelector(".img-valid-icon");
-const imglInvalidIcond = document.querySelector(".img-invalid-icon");
-fileInput.addEventListener("change", saveFile);
 function saveFile() {
   while (imagePreview.firstChild) {
     imagePreview.removeChild(imagePreview.firstChild);
@@ -123,11 +132,8 @@ function saveFile() {
     return false;
   }
 }
+fileInput.addEventListener("change", saveFile);
 // სახელის ვალიდაცია
-const nameInput = document.getElementById("name");
-const nameLabel = document.querySelector(".name-label");
-const nameValidIcon = document.querySelector(".name-valid-icon");
-const nameInvalidIcond = document.querySelector(".name-invalid-icon");
 function nameValid(text) {
   let valid = false;
   var text = document.getElementById("name").value.replace(/\s/g); //read input
@@ -157,10 +163,6 @@ function nameValid(text) {
 }
 nameInput.addEventListener("input", nameValid);
 //გვარის ვალიდაცია
-const lastNameInput = document.getElementById("lastName");
-const lastNameLabel = document.querySelector(".lastname-label");
-const lasNameValidIcon = document.querySelector(".lastname-valid-icon");
-const lastNameInvalidIcond = document.querySelector(".lastname-invalid-icon");
 function lastNameValid(text) {
   let valid = false;
   var text = document.getElementById("lastName").value.replace(/\s/g); //read
@@ -190,7 +192,6 @@ function lastNameValid(text) {
 }
 lastNameInput.addEventListener("input", lastNameValid);
 // ჩემ შესახებ ველისთვის ვალიდაცია border valid-ის გაკეთება
-const aboutMe = document.getElementById("about-me");
 function aboutmeValid() {
   if (aboutMe.value.length >= 1) {
     aboutMe.classList.add("valid");
@@ -202,12 +203,6 @@ function aboutmeValid() {
 }
 aboutMe.addEventListener("keyup", aboutmeValid);
 // ემაილის ვალიდაცია
-const validIcon = document.querySelector(".valid-icon");
-const emailLabel = document.getElementById("email-label");
-const emailValidIcon = document.querySelector(".email-valid-icon");
-const emailInvalidIcond = document.querySelector(".email-invalid-icon");
-var pattern = /^[a-zA-Z0-9.]+@redberry.ge$/;
-const email = document.querySelector(".input-email");
 function emailValidation() {
   let valid = false;
   if (email.value.match(pattern)) {
@@ -230,12 +225,6 @@ function emailValidation() {
 }
 email.addEventListener("input", emailValidation);
 //მობილური ნომრის ვალიდაცია
-const phoneNumber = document.querySelector(".input-phone-number");
-const numberLabel = document.querySelector(".number-label");
-const numberValidIcon = document.querySelector(".number-valid-icon");
-const numberInvalidIcond = document.querySelector(".number-invalid-icon");
-
-var phonePattern = /^(\+995)\s\d{3}\s\d{2}\s\d{2}\s\d{2}$/;
 function phoneValidation(e) {
   let valid = false;
   if (phoneNumber.value.match(phonePattern)) {
@@ -256,8 +245,6 @@ function phoneValidation(e) {
   }
   return valid;
 }
-phoneNumber.addEventListener("input", phoneValidation);
-const phoneNumberInp = document.getElementById("phone-number");
 phoneNumberInp.addEventListener("keydown", function (e) {
   const txt = this.value;
   if (
@@ -269,10 +256,116 @@ phoneNumberInp.addEventListener("keydown", function (e) {
   )
     this.value = this.value + " ";
 });
+phoneNumber.addEventListener("input", phoneValidation);
+// თანამდებობის ვალიდაცია
+function positionValidation() {
+  let valid = false;
+  if (positionInput.value.length >= 2) {
+    positionInput.classList.add("valid");
+    positionInput.classList.remove("invalid");
+    positionLabel.style.color = "#000000";
+    positionValidIcon.classList.add("show");
+    positionInvalidIcon.classList.remove("show");
+    positionInput.style.outline = "none";
+    valid = true;
+  } else {
+    positionInput.classList.remove("valid");
+    positionInput.classList.add("invalid");
+    positionLabel.style.color = "#e52f2f";
+    positionValidIcon.classList.remove("show");
+    positionInvalidIcon.classList.add("show");
+    positionInput.style.outline = "none";
+  }
+  return valid;
+}
+positionInput.addEventListener("input", positionValidation);
+//დამსაქმებლის ვალიდაცია
+function employerValidation() {
+  let valid = false;
+  if (employerInput.value.length >= 2) {
+    employerInput.classList.add("valid");
+    employerInput.classList.remove("invalid");
+    employerLabel.style.color = "#000000";
+    employerValidIcon.classList.add("show");
+    employerInvalidIcon.classList.remove("show");
+    employerInput.style.outline = "none";
+    valid = true;
+  } else {
+    employerInput.classList.remove("valid");
+    employerInput.classList.add("invalid");
+    employerLabel.style.color = "#e52f2f";
+    employerValidIcon.classList.remove("show");
+    employerInvalidIcon.classList.add("show");
+    employerInput.style.outline = "none";
+  }
+  return valid;
+}
+employerInput.addEventListener("input", employerValidation);
+// თარიღის ვალიდაცია
+// დაწყების
+startDateInput.max = new Date().toISOString().split("T")[0];
+startDateInput.addEventListener("input", function (event) {
+  endtDateInput.min = event.target.value;
+  let valid = false;
+  if (startDateInput.value != "") {
+    startDateInput.classList.add("valid");
+    startDateInput.classList.remove("invalid");
+    startDateLabel.style.color = "#000000";
+    startDateInput.style.outline = "none";
+    valid = true;
+  } else {
+    startDateInput.classList.remove("valid");
+    startDateInput.classList.add("invalid");
+    startDateLabel.style.color = "#e52f2f";
+    startDateInput.style.outline = "none";
+  }
+  return valid;
+});
+//დამთავრების
+endtDateInput.max = new Date().toISOString().split("T")[0];
+endtDateInput.addEventListener("input", function endDateValidation(event) {
+  const startDateValue = new Date(startDateInput.value);
+  const endDateValue = new Date(event.target.value);
+
+  if (endDateValue < startDateValue) {
+    event.target.value = startDateInput.value;
+  }
+
+  let valid = false;
+  if (endtDateInput.value != "") {
+    endtDateInput.classList.add("valid");
+    endtDateInput.classList.remove("invalid");
+    endtDateLabel.style.color = "#000000";
+    endtDateInput.style.outline = "none";
+    valid = true;
+  } else {
+    endtDateInput.classList.remove("valid");
+    endtDateInput.classList.add("invalid");
+    endtDateLabel.style.color = "#e52f2f";
+    endtDateInput.style.outline = "none";
+  }
+  return valid;
+});
+// აღწერის TextArea-ს ვალიდაცია
+function descriptioValidation() {
+  let valid = false;
+  if (description.value != "") {
+    description.classList.add("valid");
+    description.classList.remove("invalid");
+    descriptionLabel.style.color = "#000000";
+    description.style.outline = "none";
+    valid = true;
+  } else {
+    description.classList.remove("valid");
+    description.classList.add("invalid");
+    descriptionLabel.style.color = "#e52f2f";
+    description.style.outline = "none";
+  }
+  return valid;
+}
+description.addEventListener("input", descriptioValidation);
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // სახელის
-const displayName = document.getElementById("name_display");
-const displayLastName = document.getElementById("lastname_display");
 function setName(e) {
   if (nameValid()) {
     displayName.innerText = e.target.value;
@@ -291,8 +384,6 @@ function setLastName(e) {
 }
 lastNameInput.addEventListener("keyup", setLastName);
 // ემაილის
-const emailIcon = document.querySelector(".email-icon");
-const displayEmail = document.querySelector(".email-text");
 function setEmail(e) {
   if (emailValidation()) {
     emailIcon.classList.add("show");
@@ -317,8 +408,6 @@ function setPhone(e) {
 }
 phoneNumber.addEventListener("keyup", setPhone);
 // ჩემ შესახებ
-const aboutMeTitle = document.querySelector(".about_me-title");
-const displayAboutMe = document.querySelector(".about_me-text");
 function setAboutMe(e) {
   if (aboutMe.value.length >= 1) {
     aboutMeTitle.classList.add("show");
@@ -328,3 +417,72 @@ function setAboutMe(e) {
   }
 }
 aboutMe.addEventListener("keyup", setAboutMe);
+// თანამდებობის
+
+function setPosition(e) {
+  if (positionValidation()) {
+    experinceTitle.classList.add("show");
+    displayPosition.classList.add("show");
+    displayPosition.innerHTML = e.target.value + ",";
+    displayLine.classList.add("show");
+  } else {
+    displayPosition.classList.remove("show");
+
+    displayPosition.innerHTML = "";
+  }
+}
+positionInput.addEventListener("keyup", setPosition);
+// დამსაქმებლის
+function setEmployer(e) {
+  if (employerValidation()) {
+    experinceTitle.classList.add("show");
+    employerPosition.classList.add("show");
+    displayLine.classList.add("show");
+    employerPosition.innerHTML = e.target.value;
+  } else {
+    employerPosition.classList.remove("show");
+
+    employerPosition.innerHTML = "";
+  }
+}
+employerInput.addEventListener("keyup", setEmployer);
+// დაწყების თარიღის
+function setStartDate(e) {
+  if (startDateInput.value.length > 1) {
+    experinceTitle.classList.add("show");
+    startDate.classList.add("show");
+    displayLine.classList.add("show");
+    startDate.innerHTML = e.target.value;
+  } else {
+    startDate.classList.remove("show");
+
+    startDate.innerHTML = "";
+  }
+}
+startDateInput.addEventListener("change", setStartDate);
+// დასრულების თარიღი
+function setEndDate(e) {
+  if (endtDateInput.value.length > 1) {
+    experinceTitle.classList.add("show");
+    endtDate.classList.add("show");
+    displayLine.classList.add("show");
+    endtDate.innerHTML = "- " + " " + e.target.value;
+  } else {
+    endtDate.classList.remove("show");
+    endtDate.innerHTML = "";
+  }
+}
+endtDateInput.addEventListener("change", setEndDate);
+// აღწერის
+function setDescription(e) {
+  if (descriptioValidation()) {
+    experinceTitle.classList.add("show");
+    descriptionDisplay.classList.add("show");
+    displayLine.classList.add("show");
+    descriptionDisplay.innerHTML = e.target.value;
+  } else {
+    descriptionDisplay.classList.remove("show");
+    descriptionDisplay.innerHTML = "";
+  }
+}
+description.addEventListener("keyup", setDescription);
