@@ -27,7 +27,7 @@ body {
 }
 
 .second-page {
-  display: block;
+  display: none;
 }
 .third-page {
   display: none;

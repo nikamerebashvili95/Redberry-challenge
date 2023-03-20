@@ -54,7 +54,7 @@ const employerPosition = document.querySelector(".employer-display");
 const startDate = document.querySelector(".date-start-display");
 const endtDate = document.querySelector(".date-end-display");
 const descriptionDisplay = document.querySelector(".description-display");
-
+const moreExperienceBtn = document.querySelector(".more-experience-btn");
 // მთავარი გვერდიდან გადასვლა შესავსებ აპლიკაციაში
 function goToGeneralInfo() {
   location.href = "./survey.html";
@@ -364,6 +364,101 @@ function descriptioValidation() {
   return valid;
 }
 description.addEventListener("input", descriptioValidation);
+// მეტი გამოცდილების დამატება
+var countre = 1;
+html = ` <div class="form-container -${countre}">
+<div class="input-field">
+  <span class="position-valid-icon">
+    <img
+      src="assets/images/icons/valid-icon.svg"
+      alt="valid-cion"
+    />
+  </span>
+  <span class="position-invalid-icon">
+    <img
+      src="assets/images/icons/invalid-icon.svg"
+      alt="invalid-icon"
+    />
+  </span>
+  <label class="label-top label-position" for="position-input"
+    >თანამდებობა</label
+  >
+  <input
+    class="input position-input-${countre}"
+    onkeyup="positionValidation()"
+    type="text"
+    placeholder="თანამდებობა"
+  />
+  <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+</div>
+<div class="input-field employer">
+  <span class="employer-valid-icon">
+    <img
+      src="assets/images/icons/valid-icon.svg"
+      alt="valid-cion"
+    />
+  </span>
+  <span class="employer-invalid-icon">
+    <img
+      src="assets/images/icons/invalid-icon.svg"
+      alt="invalid-icon"
+    />
+  </span>
+  <label class="label-top label-employer" for="employer-input"
+    >დამსაქმებელი</label
+  >
+  <input
+    class="input employer-input-${countre}"
+    onkeyup="employerValidation()"
+    type="text"
+    placeholder="დამსაქმებელი"
+  />
+  <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+</div>
+<div class="date-container">
+  <div class="input-field left-date">
+    <label class="label-top label-start-date" for="start_date"
+      >დაწყების რიცხვი</label
+    >
+    <input
+      onchange="startDateValidation()"
+      type="date"
+      class="date start_date-${countre}"
+    />
+  </div>
+  <div class="input-field right-date">
+    <label class="label-top label-end-date" for="end_date"
+      >დამთავრების რიცხვი</label
+    >
+    <input
+      type="date"
+      class="date end_date-${countre}"
+      onchange="endtDateValidation()"
+    />
+  </div>
+</div>
+<div class="input-field about-field">
+  <label class="label-top label-description" for="description"
+    >აღწერა</label
+  >
+  <textarea
+    class="input about-input description-${countre}"
+    name="about"
+    placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+    onkeyup="descriptioValidation()"
+  ></textarea>
+</div>
+<div class="border-grey-line"></div>`;
+function add_more_field() {
+  countre += 1;
+  var form = document.querySelector(".moreExp");
+  form.innerHTML += html;
+}
+
+var wholeForm = document.querySelector("#form");
+wholeForm.onsubmit = function (e) {
+  e.preventDefault();
+};
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // სახელის
 function setName(e) {
