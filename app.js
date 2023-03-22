@@ -45,8 +45,8 @@ const startDateInput = document.querySelector(".start_date");
 const endtDateInput = document.querySelector(".end_date");
 const startDateLabel = document.querySelector(".label-start-date");
 const endtDateLabel = document.querySelector(".label-end-date");
-const description = document.querySelector(".description");
-const descriptionLabel = document.querySelector(".label-description");
+// const description = document.querySelector(".description");
+//const descriptionLabel = document.querySelector(".label-description");
 const experinceTitle = document.querySelector(".experince-title");
 const displayPosition = document.querySelector(".position-display");
 const displayLine = document.querySelector(".grey-line");
@@ -67,8 +67,8 @@ function goToLanding() {
 // დაკლიკებით შემდეგ პირველი გვერდიდან მეორეზე გადასვლა თუ ვალიდურია
 nextBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  let isNameValid = nameValid(),
-    islastNameValid = lastNameValid(),
+  let isNameValid = nameValidation(),
+    islastNameValid = lastNameValidation(),
     isEmailValid = emailValidation(),
     isPhoneValid = phoneValidation(),
     isImgValid = saveFile();
@@ -134,7 +134,7 @@ function saveFile() {
 }
 fileInput.addEventListener("change", saveFile);
 // სახელის ვალიდაცია
-function nameValid(text) {
+function nameValidation(text) {
   let valid = false;
   var text = document.getElementById("name").value.replace(/\s/g); //read input
   var langdic = {
@@ -161,9 +161,9 @@ function nameValid(text) {
   });
   return valid;
 }
-nameInput.addEventListener("input", nameValid);
+nameInput.addEventListener("input", nameValidation);
 //გვარის ვალიდაცია
-function lastNameValid(text) {
+function lastNameValidation(text) {
   let valid = false;
   var text = document.getElementById("lastName").value.replace(/\s/g); //read
   var langdic = {
@@ -190,7 +190,7 @@ function lastNameValid(text) {
   });
   return valid;
 }
-lastNameInput.addEventListener("input", lastNameValid);
+lastNameInput.addEventListener("input", lastNameValidation);
 // ჩემ შესახებ ველისთვის ვალიდაცია border valid-ის გაკეთება
 function aboutmeValid() {
   if (aboutMe.value.length >= 1) {
@@ -347,6 +347,9 @@ endtDateInput.addEventListener("input", function endDateValidation(event) {
   return valid;
 });
 // აღწერის TextArea-ს ვალიდაცია
+/*
+const description = document.querySelectorAll(".description");
+const descriptionLabel = document.querySelectorAll(".label-description");
 function descriptioValidation() {
   let valid = false;
   if (description.value != "") {
@@ -364,105 +367,147 @@ function descriptioValidation() {
   return valid;
 }
 description.addEventListener("input", descriptioValidation);
-// მეტი გამოცდილების დამატება
-var countre = 1;
-html = ` <div class="form-container -${countre}">
-<div class="input-field">
-  <span class="position-valid-icon">
-    <img
-      src="assets/images/icons/valid-icon.svg"
-      alt="valid-cion"
-    />
-  </span>
-  <span class="position-invalid-icon">
-    <img
-      src="assets/images/icons/invalid-icon.svg"
-      alt="invalid-icon"
-    />
-  </span>
-  <label class="label-top label-position" for="position-input"
-    >თანამდებობა</label
-  >
-  <input
-    class="input position-input-${countre}"
-    onkeyup="positionValidation()"
-    type="text"
-    placeholder="თანამდებობა"
-  />
-  <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
-</div>
-<div class="input-field employer">
-  <span class="employer-valid-icon">
-    <img
-      src="assets/images/icons/valid-icon.svg"
-      alt="valid-cion"
-    />
-  </span>
-  <span class="employer-invalid-icon">
-    <img
-      src="assets/images/icons/invalid-icon.svg"
-      alt="invalid-icon"
-    />
-  </span>
-  <label class="label-top label-employer" for="employer-input"
-    >დამსაქმებელი</label
-  >
-  <input
-    class="input employer-input-${countre}"
-    onkeyup="employerValidation()"
-    type="text"
-    placeholder="დამსაქმებელი"
-  />
-  <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
-</div>
-<div class="date-container">
-  <div class="input-field left-date">
-    <label class="label-top label-start-date" for="start_date"
-      >დაწყების რიცხვი</label
-    >
-    <input
-      onchange="startDateValidation()"
-      type="date"
-      class="date start_date-${countre}"
-    />
-  </div>
-  <div class="input-field right-date">
-    <label class="label-top label-end-date" for="end_date"
-      >დამთავრების რიცხვი</label
-    >
-    <input
-      type="date"
-      class="date end_date-${countre}"
-      onchange="endtDateValidation()"
-    />
-  </div>
-</div>
-<div class="input-field about-field">
-  <label class="label-top label-description" for="description"
-    >აღწერა</label
-  >
-  <textarea
-    class="input about-input description-${countre}"
-    name="about"
-    placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
-    onkeyup="descriptioValidation()"
-  ></textarea>
-</div>
-<div class="border-grey-line"></div>`;
-function add_more_field() {
-  countre += 1;
-  var form = document.querySelector(".moreExp");
-  form.innerHTML += html;
+*/
+let descriptions = document.querySelectorAll(".description");
+let descriptionLabels = document.querySelectorAll(".label-description");
+function descriptionValidation(description, index) {
+  if (description.value !== "") {
+    description.classList.add("valid");
+    description.classList.remove("invalid");
+    descriptionLabels[index].style.color = "#000000";
+    description.style.outline = "none";
+    return true;
+  } else {
+    description.classList.remove("valid");
+    description.classList.add("invalid");
+    descriptionLabels[index].style.color = "#e52f2f";
+    description.style.outline = "none";
+    return false;
+  }
 }
 
+descriptions.forEach((description, index) => {
+  description.addEventListener("input", () => {
+    descriptionValidation(description, index);
+  });
+});
+
+// add event listener to specific element
+descriptionLabels[0].addEventListener("change", () => {
+  descriptionValidation(descriptions[0], 0);
+});
+// მეტი გამოცდილების დამატება
+
+function add_more_field() {
+  const html = ` <div class="form-container">
+ <div class="input-field">
+   <span class="position-valid-icon">
+     <img
+       src="assets/images/icons/valid-icon.svg"
+       alt="valid-cion"
+     />
+   </span>
+   <span class="position-invalid-icon">
+     <img
+       src="assets/images/icons/invalid-icon.svg"
+       alt="invalid-icon"
+     />
+   </span>
+   <label class="label-top label-position" for="position-input"
+     >თანამდებობა</label
+   >
+   <input
+     class="input position-input"
+     type="text"
+     placeholder="თანამდებობა"
+   />
+   <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+ </div>
+ <div class="input-field employer">
+   <span class="employer-valid-icon">
+     <img
+       src="assets/images/icons/valid-icon.svg"
+       alt="valid-cion"
+     />
+   </span>
+   <span class="employer-invalid-icon">
+     <img
+       src="assets/images/icons/invalid-icon.svg"
+       alt="invalid-icon"
+     />
+   </span>
+   <label class="label-top label-employer" for="employer-input"
+     >დამსაქმებელი</label
+   >
+   <input
+     class="input employer-input"
+     type="text"
+     placeholder="დამსაქმებელი"
+   />
+   <label class="label-bottom">მინიმუმ 2 სიმბოლო</label>
+ </div>
+ <div class="date-container">
+   <div class="input-field left-date">
+     <label class="label-top label-start-date" for="start_date"
+       >დაწყების რიცხვი</label
+     >
+     <input
+       type="date"
+       class="date start_date"
+     />
+   </div>
+   <div class="input-field right-date">
+     <label class="label-top label-end-date" for="end_date"
+       >დამთავრების რიცხვი</label
+     >
+     <input
+       type="date"
+       class="date end_date"
+     />
+   </div>
+ </div>
+ <div class="input-field about-field">
+   <label class="label-top label-description" for="description"
+     >აღწერა</label
+   >
+   <textarea
+     class="input about-input description"
+     name="about"
+     placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
+   ></textarea>
+ </div>
+ <div class="border-grey-line"></div>`;
+  const form = document.querySelector(".moreExp");
+  form.insertAdjacentHTML("beforeend", html);
+  descriptions = document.querySelectorAll(".description");
+  descriptionLabels = document.querySelectorAll(".label-description");
+
+  // add event listeners to new elements
+  const lastIndex = descriptions.length - 1;
+  descriptions[lastIndex].addEventListener("input", () => {
+    descriptionValidation(descriptions[lastIndex], lastIndex);
+  });
+}
+function validateForm() {
+  let valid = true;
+  descriptions.forEach((description, index) => {
+    if (!descriptionValidation(description, index)) {
+      valid = false;
+    }
+  });
+  return valid;
+}
 var wholeForm = document.querySelector("#form");
 wholeForm.onsubmit = function (e) {
   e.preventDefault();
+  if (validateForm()) {
+    wholeForm.submit();
+  }
 };
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // სახელის
 function setName(e) {
-  if (nameValid()) {
+  if (nameValidation()) {
     displayName.innerText = e.target.value;
   } else {
     displayName.innerText = "";
@@ -471,7 +516,7 @@ function setName(e) {
 nameInput.addEventListener("keyup", setName);
 // გვარის
 function setLastName(e) {
-  if (lastNameValid()) {
+  if (lastNameValidation()) {
     displayLastName.innerText = e.target.value;
   } else {
     displayLastName.innerText = "";
@@ -580,4 +625,4 @@ function setDescription(e) {
     descriptionDisplay.innerHTML = "";
   }
 }
-description.addEventListener("keyup", setDescription);
+//description.addEventListener("keyup", setDescription);
