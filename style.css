@@ -25,9 +25,11 @@ body {
   width: 1098px;
   padding: 47px 150px 65px 150px;
 }
-
-.second-page {
+.first-page {
   display: none;
+}
+.second-page {
+  display: block;
 }
 .third-page {
   display: none;
@@ -342,7 +344,7 @@ select:focus {
 /*********** RIGHT PAGE ***********/
 .right {
   width: 822px;
-  height: 100vh;
+  max-height: 100vh;
   background: #ffffff;
   padding: 48px 75px 44px 80px;
   display: flex;
@@ -413,6 +415,7 @@ select:focus {
 }
 #about_me_display {
   margin-top: 34px;
+  width: 100%;
 }
 .about_me-title,
 .experince-title,
@@ -433,6 +436,7 @@ select:focus {
   line-height: 22px;
   text-transform: lowercase;
   color: #000000;
+  word-break: break-all;
 }
 .grey-line {
   width: 100%;
@@ -466,6 +470,7 @@ select:focus {
   color: #1a1a1a;
   display: none;
   margin-bottom: 7px;
+  word-break: break-all;
 }
 .date-content {
   display: flex;
@@ -498,6 +503,7 @@ select:focus {
   text-transform: capitalize;
   color: #000000;
   display: none;
+  overflow-wrap: break-word;
 }
 .education-title {
   margin-top: 26px;
