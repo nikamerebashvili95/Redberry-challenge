@@ -44,17 +44,17 @@ let employerInvalidIcon = document.querySelectorAll(".employer-invalid-icon");
 let startDateInputs = document.querySelectorAll(".start_date");
 let endtDateInputs = document.querySelectorAll(".end_date");
 let startDateLabels = document.querySelectorAll(".label-start-date");
-let endtDateLabel = document.querySelector(".label-end-date");
-const displayPosition = document.querySelectorAll(".position-display");
-const displayEmployer = document.querySelector(".employer-display");
-const startDate = document.querySelector(".date-start-display");
-const endtDate = document.querySelector(".date-end-display");
+let endtDateLabels = document.querySelectorAll(".label-end-date");
+let displayPosition = document.querySelectorAll(".position-display");
+let displayEmployer = document.querySelectorAll(".employer-display");
+let startDate = document.querySelectorAll(".date-start-display");
+let endDate = document.querySelectorAll(".date-end-display");
 const moreExperienceBtn = document.querySelector(".more-experience-btn");
 let descriptions = document.querySelectorAll(".description");
 let descriptionLabels = document.querySelectorAll(".label-description");
-let experinceTitle = document.querySelector(".experince-title");
-let displayLine = document.querySelector(".grey-line");
-let descriptionDisplay = document.querySelector(".description-display");
+let experinceTitles = document.querySelectorAll(".experince-title");
+let displayLines = document.querySelectorAll(".grey-line");
+let descriptionDisplays = document.querySelectorAll(".description-display");
 let experienceContainer = document.querySelector(".experience_display");
 // მთავარი გვერდიდან გადასვლა შესავსებ აპლიკაციაში
 function goToGeneralInfo() {
@@ -330,11 +330,13 @@ function employerValidation(employer, index) {
     return false;
   }
 }
+
 employerInput.forEach((employer, index) => {
   employer.addEventListener("input", () => {
     employerValidation(employer, index);
   });
 });
+
 employerLabel[0].addEventListener("change", () => {
   employerValidation(employerInput[0], 0);
 });
@@ -368,11 +370,9 @@ function addEventListenersToDates(
   endtDateInput.addEventListener("input", function endDateValidation(event) {
     const startDateValue = new Date(startDateInput.value);
     const endDateValue = new Date(event.target.value);
-
     if (endDateValue < startDateValue) {
       event.target.value = startDateInput.value;
     }
-
     let valid = false;
     if (endtDateInput.value != "") {
       endtDateInput.classList.add("valid");
@@ -394,9 +394,15 @@ for (let i = 0; i < startDateInputs.length; i++) {
     startDateInputs[i],
     endtDateInputs[i],
     startDateLabels[i],
-    endtDateLabel
+    endtDateLabels[i]
   );
 }
+addEventListenersToDates(
+  startDateInputs[startDateInputs.length - 1],
+  endtDateInputs[endtDateInputs.length - 1],
+  startDateLabels[startDateLabels.length - 1],
+  endtDateLabels[endtDateLabels.length - 1]
+);
 // აღწერის TextArea-ს ვალიდაცია
 function descriptionValidation(description, index) {
   if (description.value !== "") {
@@ -430,7 +436,7 @@ function add_more_field() {
    <span class="position-valid-icon">
      <img
        src="assets/images/icons/valid-icon.svg"
-       alt="valid-cion"
+       alt="valid-icon"
      />
    </span>
    <span class="position-invalid-icon">
@@ -453,7 +459,7 @@ function add_more_field() {
    <span class="employer-valid-icon">
      <img
        src="assets/images/icons/valid-icon.svg"
-       alt="valid-cion"
+       alt="valid-icon"
      />
    </span>
    <span class="employer-invalid-icon">
@@ -511,23 +517,34 @@ function add_more_field() {
   positionLabel = document.querySelectorAll(".label-position");
   positionValidIcon = document.querySelectorAll(".position-valid-icon");
   positionInvalidIcon = document.querySelectorAll(".position-invalid-icon");
+  displayPosition = document.querySelectorAll(".position-display");
   employerInput = document.querySelectorAll(".employer-input");
   employerLabel = document.querySelectorAll(".label-employer");
   employerValidIcon = document.querySelectorAll(".employer-valid-icon");
   employerInvalidIcon = document.querySelectorAll(".employer-invalid-icon");
-  // add event listeners to new elements
+  const startDateInputs = document.querySelectorAll(".start_date");
+  const endtDateInputs = document.querySelectorAll(".end_date");
+  const startDateLabels = document.querySelectorAll(".label-start-date");
+  const endtDateLabel = document.querySelector(".label-end-date");
   const lastIndex = descriptions.length - 1;
+  const lastIndex_2 = positionInput.length - 1;
+  const lastIndex_3 = employerInput.length - 1;
+  // add event listeners to new elements
   descriptions[lastIndex].addEventListener("input", () => {
     descriptionValidation(descriptions[lastIndex], lastIndex);
   });
-  const lastIndex_2 = positionInput.length - 1;
   positionInput[lastIndex_2].addEventListener("input", () => {
     positionValidation(positionInput[lastIndex_2], lastIndex_2);
   });
-  const lastIndex_3 = employerInput.length - 1;
   employerInput[lastIndex_3].addEventListener("input", () => {
     employerValidation(employerInput[lastIndex_3], lastIndex_3);
   });
+  addEventListenersToDates(
+    startDateInputs[startDateInputs.length - 1],
+    endtDateInputs[endtDateInputs.length - 1],
+    startDateLabels[startDateLabels.length - 1],
+    endtDateLabel
+  );
 }
 function validateForm() {
   let valid = true;
@@ -599,88 +616,92 @@ function setAboutMe(e) {
 }
 aboutMe.addEventListener("keyup", setAboutMe);
 // თანამდებობის
-function setPosition(position) {
-  if (positionValidation(position, 0)) {
-    displayPosition.classList.add("show");
-    displayPosition.innerHTML = position.value + ",";
-    displayLine.classList.add("show");
-    experinceTitle.classList.add("show");
+function setPosition(index, position) {
+  if (positionValidation(position, index)) {
+    displayPosition[index].classList.add("show");
+    displayPosition[index].innerHTML = position.value + ",";
+    displayLines[index].classList.add("show");
+    experinceTitles[index].classList.add("show");
   } else {
-    displayPosition.classList.remove("show");
-    displayPosition.innerHTML = "";
+    displayPosition[index].classList.remove("show");
+    displayPosition[index].innerHTML = "";
   }
 }
-positionInput.forEach((position) => {
+positionInput.forEach((position, index) => {
   position.addEventListener("keyup", () => {
-    setPosition(position);
+    setPosition(index, position);
   });
 });
 // positionInput.addEventListener("keyup", setPosition);
-positionInput.forEach((position) => {
-  position.addEventListener("keyup", () => {
-    positionValidation(position);
-  });
-});
 // დამსაქმებლის
-function setEmployer(employer) {
-  if (employerValidation(employer, 0)) {
-    displayEmployer.classList.add("show");
-    displayEmployer.innerHTML = employer.value;
-    displayLine.classList.add("show");
-    experinceTitle.classList.add("show");
+function setEmployer(index, employer) {
+  if (employerValidation(employer, index)) {
+    displayEmployer[index].classList.add("show");
+    displayEmployer[index].innerHTML = employer.value;
+    displayLines[index].classList.add("show");
+    experinceTitles[index].classList.add("show");
   } else {
-    displayEmployer.classList.remove("show");
-    displayEmployer.innerHTML = "";
+    displayEmployer[index].classList.remove("show");
+    displayEmployer[index].innerHTML = "";
   }
 }
-employerInput.forEach((employer) => {
+
+employerInput.forEach((employer, index) => {
   employer.addEventListener("keyup", () => {
-    setPosition(employer);
+    setEmployer(index, employer);
   });
 });
 // დაწყების თარიღის
 function setStartDate(e) {
-  if (startDateInput.value.length > 1) {
-    experinceTitle.classList.add("show");
-    startDate.classList.add("show");
-    displayLine.classList.add("show");
-    startDate.innerHTML = e.target.value;
+  const index = Array.from(startDateInputs).indexOf(e.target);
+  if (e.target.value.length > 1) {
+    experinceTitles[index].classList.add("show");
+    startDateLabels[index].classList.add("show");
+    displayLines[index].classList.add("show");
+    startDate[index].innerHTML = e.target.value;
   } else {
-    startDate.classList.remove("show");
-
-    startDate.innerHTML = "";
+    startDateLabels[index].classList.remove("show");
+    startDate[index].innerHTML = "";
   }
 }
-// startDateInput.addEventListener("change", setStartDate);
+
+// for (let i = 0; i < startDateInputs.length; i++) {
+//   startDateInputs[i].addEventListener("change", setStartDate);
+// }
+startDateInputs.forEach(function (startDateInput) {
+  startDateInput.addEventListener("change", setStartDate);
+});
 // დასრულების თარიღი
 function setEndDate(e) {
-  if (endtDateInput.value.length > 1) {
-    experinceTitle.classList.add("show");
-    endtDate.classList.add("show");
-    displayLine.classList.add("show");
-    endtDate.innerHTML = "- " + " " + e.target.value;
+  const index = Array.from(endtDateInputs).indexOf(e.target);
+  if (e.target.value.length > 1) {
+    endDate[index].innerHTML = "- " + " " + e.target.value;
   } else {
-    endtDate.classList.remove("show");
-    endtDate.innerHTML = "";
+    endDate[index].innerHTML = "";
   }
 }
+// for (let i = 0; i < endtDateInputs.length; i++) {
+//   endtDateInputs[i].addEventListener("change", setEndDate);
+// }
+endtDateInputs.forEach(function (endtDateInput) {
+  endtDateInput.addEventListener("change", setEndDate);
+});
 // endtDateInput.addEventListener("change", setEndDate);
 // აღწერის
-function setDescription(description) {
+function setDescription(index, description) {
   if (descriptionValidation(description, 0)) {
-    experinceTitle.classList.add("show");
-    descriptionDisplay.classList.add("show");
-    displayLine.classList.add("show");
-    descriptionDisplay.innerHTML = description.value;
+    experinceTitles[index].classList.add("show");
+    descriptionDisplays[index].classList.add("show");
+    displayLines[index].classList.add("show");
+    descriptionDisplays[index].innerHTML = description.value;
   } else {
-    descriptionDisplay.classList.remove("show");
-    descriptionDisplay.innerHTML = "";
+    descriptionDisplays[index].classList.remove("show");
+    descriptionDisplays[index].innerHTML = "";
   }
 }
 
-//description.addEventListener("keyup", setDescription);
-descriptions.forEach((description) => {
+descriptions.forEach((description, index) => {
   description.addEventListener("keyup", () => {
-    setDescription(description);
+    setDescription(index, description);
   });
 });
