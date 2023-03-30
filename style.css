@@ -341,7 +341,7 @@ select:focus {
 /*********** RIGHT PAGE ***********/
 .right {
   width: 822px;
-  max-height: 100vh;
+  min-height: 100vh;
   background: #ffffff;
   padding: 48px 75px 44px 80px;
   display: flex;

@@ -47,8 +47,8 @@ let startDateLabels = document.querySelectorAll(".label-start-date");
 let endtDateLabels = document.querySelectorAll(".label-end-date");
 let displayPosition = document.querySelectorAll(".position-display");
 let displayEmployer = document.querySelectorAll(".employer-display");
-let startDate = document.querySelectorAll(".date-start-display");
-let endDate = document.querySelectorAll(".date-end-display");
+let startDateDisplay = document.querySelectorAll(".date-start-display");
+let endDateDisplay = document.querySelectorAll(".date-end-display");
 const moreExperienceBtn = document.querySelector(".more-experience-btn");
 let descriptions = document.querySelectorAll(".description");
 let descriptionLabels = document.querySelectorAll(".label-description");
@@ -365,7 +365,10 @@ function addEventListenersToDates(
     }
     return valid;
   });
-
+  startDateInput.addEventListener("change", () => {
+    checkAllEmpty();
+  });
+  startDateInput.addEventListener("change", setStartDate);
   endtDateInput.max = new Date().toISOString().split("T")[0];
   endtDateInput.addEventListener("input", function endDateValidation(event) {
     const startDateValue = new Date(startDateInput.value);
@@ -388,6 +391,10 @@ function addEventListenersToDates(
     }
     return valid;
   });
+  endtDateInput.addEventListener("change", () => {
+    checkAllEmpty();
+  });
+  endtDateInput.addEventListener("change", setEndDate);
 }
 for (let i = 0; i < startDateInputs.length; i++) {
   addEventListenersToDates(
@@ -419,7 +426,6 @@ function descriptionValidation(description, index) {
     return false;
   }
 }
-
 descriptions.forEach((description, index) => {
   description.addEventListener("input", () => {
     descriptionValidation(description, index);
@@ -429,7 +435,6 @@ descriptionLabels[0].addEventListener("change", () => {
   descriptionValidation(descriptions[0], 0);
 });
 // მეტი გამოცდილების დამატება
-
 function add_more_field() {
   const html = ` <div class="form-container">
  <div class="input-field">
@@ -508,9 +513,11 @@ function add_more_field() {
      placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
    ></textarea>
  </div>
+ </div>
  <div class="border-grey-line"></div>`;
   const form = document.querySelector(".moreExp");
   form.insertAdjacentHTML("beforeend", html);
+  addMoreExpDisplay();
   descriptions = document.querySelectorAll(".description");
   descriptionLabels = document.querySelectorAll(".label-description");
   positionInput = document.querySelectorAll(".position-input");
@@ -522,10 +529,15 @@ function add_more_field() {
   employerLabel = document.querySelectorAll(".label-employer");
   employerValidIcon = document.querySelectorAll(".employer-valid-icon");
   employerInvalidIcon = document.querySelectorAll(".employer-invalid-icon");
-  const startDateInputs = document.querySelectorAll(".start_date");
-  const endtDateInputs = document.querySelectorAll(".end_date");
-  const startDateLabels = document.querySelectorAll(".label-start-date");
-  const endtDateLabel = document.querySelector(".label-end-date");
+  displayLines = document.querySelectorAll(".grey-line");
+  displayEmployer = document.querySelectorAll(".employer-display");
+  descriptionDisplays = document.querySelectorAll(".description-display");
+  startDateInputs = document.querySelectorAll(".start_date");
+  endtDateInputs = document.querySelectorAll(".end_date");
+  startDateLabels = document.querySelectorAll(".label-start-date");
+  endtDateLabels = document.querySelector(".label-end-date");
+  startDateDisplay = document.querySelectorAll(".date-start-display");
+  endDateDisplay = document.querySelectorAll(".date-end-display");
   const lastIndex = descriptions.length - 1;
   const lastIndex_2 = positionInput.length - 1;
   const lastIndex_3 = employerInput.length - 1;
@@ -533,28 +545,85 @@ function add_more_field() {
   descriptions[lastIndex].addEventListener("input", () => {
     descriptionValidation(descriptions[lastIndex], lastIndex);
   });
+
   positionInput[lastIndex_2].addEventListener("input", () => {
     positionValidation(positionInput[lastIndex_2], lastIndex_2);
   });
+
   employerInput[lastIndex_3].addEventListener("input", () => {
     employerValidation(employerInput[lastIndex_3], lastIndex_3);
   });
+
   addEventListenersToDates(
     startDateInputs[startDateInputs.length - 1],
     endtDateInputs[endtDateInputs.length - 1],
     startDateLabels[startDateLabels.length - 1],
-    endtDateLabel
+    endtDateLabels
   );
-}
-function validateForm() {
-  let valid = true;
-  descriptions.forEach((description, index) => {
-    if (!descriptionValidation(description, index)) {
-      valid = false;
-    }
+  // თანამდებობის
+  positionInput[lastIndex_2].addEventListener("keyup", () => {
+    setPosition(
+      lastIndex_2,
+      positionInput[lastIndex_2],
+      displayLines[lastIndex_2]
+    );
+    checkAllEmpty();
   });
-  return valid;
+  positionValidation(positionInput[lastIndex_2], lastIndex_2);
+  setPosition(
+    lastIndex_2,
+    positionInput[lastIndex_2],
+    displayLines[lastIndex_2]
+  );
+  positionInput[lastIndex_2].classList.remove("invalid");
+  if (
+    positionInvalidIcon.length > lastIndex_2 &&
+    positionInvalidIcon[lastIndex_2]
+  ) {
+    positionInvalidIcon[lastIndex_2].classList.remove("show");
+    positionLabel[lastIndex_2].style.color = "#000000";
+  }
+  //დამსაქმებლის
+  employerInput[lastIndex_3].addEventListener("keyup", () => {
+    setEmployer(
+      lastIndex_3,
+      employerInput[lastIndex_3],
+      displayLines[lastIndex_3]
+    );
+    checkAllEmpty();
+  });
+  employerValidation(employerInput[lastIndex_3], lastIndex_3);
+  setEmployer(
+    lastIndex_3,
+    employerInput[lastIndex_3],
+    displayLines[lastIndex_3]
+  );
+  employerInput[lastIndex_3].classList.remove("invalid");
+  if (
+    employerInvalidIcon.length > lastIndex_3 &&
+    employerInvalidIcon[lastIndex_3]
+  ) {
+    employerInvalidIcon[lastIndex_3].classList.remove("show");
+    employerLabel[lastIndex_3].style.color = "#000000";
+  }
+  // აღწერის
+  descriptions[lastIndex].addEventListener("keyup", () => {
+    setDescription(lastIndex, descriptions[lastIndex], displayLines[lastIndex]);
+    checkAllEmpty();
+  });
+  descriptionValidation(descriptions[lastIndex], lastIndex);
+  descriptions[lastIndex].classList.remove("invalid");
+  descriptionLabels[lastIndex_2].style.color = "#000000";
 }
+// function validateForm() {
+//   let valid = true;
+//   descriptions.forEach((description, index) => {
+//     if (!descriptionValidation(description, index)) {
+//       valid = false;
+//     }
+//   });
+//   return valid;
+// }
 var wholeForm = document.querySelector("#form");
 wholeForm.onsubmit = function (e) {
   e.preventDefault();
@@ -562,6 +631,27 @@ wholeForm.onsubmit = function (e) {
     wholeForm.submit();
   }
 };
+function addMoreExpDisplay() {
+  const html = `
+  <div class="experience_display">
+            <div class="grey-line"></div>
+            <h4 class="experince-title">გამოცდილება</h4>
+            <div class="experience-content">
+              <p class="position-display"></p>
+              <p class="employer-display"></p>
+            </div>
+            <div class="date-content">
+              <span class="date-start-display"></span>
+              <span class="date-end-display"></span>
+            </div>
+            <div class="description-content">
+              <p class="description-display"></p>
+            </div>
+          </div>
+`;
+  const form = document.querySelector(".moreExp-display");
+  form.insertAdjacentHTML("beforeend", html);
+}
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // სახელის
 function setName(e) {
@@ -620,8 +710,12 @@ function setPosition(index, position) {
   if (positionValidation(position, index)) {
     displayPosition[index].classList.add("show");
     displayPosition[index].innerHTML = position.value + ",";
-    displayLines[index].classList.add("show");
-    experinceTitles[index].classList.add("show");
+    if (displayLines.length > index && displayLines[index]) {
+      displayLines[index].classList.add("show");
+    }
+    if (experinceTitles.length > index && experinceTitles[index]) {
+      experinceTitles[index].classList.add("show");
+    }
   } else {
     displayPosition[index].classList.remove("show");
     displayPosition[index].innerHTML = "";
@@ -630,6 +724,7 @@ function setPosition(index, position) {
 positionInput.forEach((position, index) => {
   position.addEventListener("keyup", () => {
     setPosition(index, position);
+    checkAllEmpty();
   });
 });
 // positionInput.addEventListener("keyup", setPosition);
@@ -638,36 +733,45 @@ function setEmployer(index, employer) {
   if (employerValidation(employer, index)) {
     displayEmployer[index].classList.add("show");
     displayEmployer[index].innerHTML = employer.value;
-    displayLines[index].classList.add("show");
-    experinceTitles[index].classList.add("show");
+    if (displayLines.length > index && displayLines[index]) {
+      displayLines[index].classList.add("show");
+    }
+    if (experinceTitles.length > index && experinceTitles[index]) {
+      experinceTitles[index].classList.add("show");
+    }
   } else {
     displayEmployer[index].classList.remove("show");
     displayEmployer[index].innerHTML = "";
   }
 }
-
 employerInput.forEach((employer, index) => {
   employer.addEventListener("keyup", () => {
     setEmployer(index, employer);
+    checkAllEmpty();
   });
 });
 // დაწყების თარიღის
 function setStartDate(e) {
   const index = Array.from(startDateInputs).indexOf(e.target);
   if (e.target.value.length > 1) {
-    experinceTitles[index].classList.add("show");
     startDateLabels[index].classList.add("show");
-    displayLines[index].classList.add("show");
-    startDate[index].innerHTML = e.target.value;
+    startDateDisplay[index].innerHTML = e.target.value;
+    if (displayLines.length > index && displayLines[index]) {
+      displayLines[index].classList.add("show");
+    }
+    if (experinceTitles.length > index && experinceTitles[index]) {
+      experinceTitles[index].classList.add("show");
+    }
   } else {
     startDateLabels[index].classList.remove("show");
-    startDate[index].innerHTML = "";
+    startDateDisplay[index].innerHTML = "";
   }
 }
-
-// for (let i = 0; i < startDateInputs.length; i++) {
-//   startDateInputs[i].addEventListener("change", setStartDate);
-// }
+startDateInputs.forEach(function (startDateInput) {
+  startDateInput.addEventListener("change", () => {
+    checkAllEmpty();
+  });
+});
 startDateInputs.forEach(function (startDateInput) {
   startDateInput.addEventListener("change", setStartDate);
 });
@@ -675,14 +779,16 @@ startDateInputs.forEach(function (startDateInput) {
 function setEndDate(e) {
   const index = Array.from(endtDateInputs).indexOf(e.target);
   if (e.target.value.length > 1) {
-    endDate[index].innerHTML = "- " + " " + e.target.value;
+    endDateDisplay[index].innerHTML = "- " + " " + e.target.value;
   } else {
-    endDate[index].innerHTML = "";
+    endDateDisplay[index].innerHTML = "";
   }
 }
-// for (let i = 0; i < endtDateInputs.length; i++) {
-//   endtDateInputs[i].addEventListener("change", setEndDate);
-// }
+endtDateInputs.forEach(function (endtDateInput) {
+  endtDateInput.addEventListener("change", () => {
+    checkAllEmpty();
+  });
+});
 endtDateInputs.forEach(function (endtDateInput) {
   endtDateInput.addEventListener("change", setEndDate);
 });
@@ -690,18 +796,38 @@ endtDateInputs.forEach(function (endtDateInput) {
 // აღწერის
 function setDescription(index, description) {
   if (descriptionValidation(description, 0)) {
-    experinceTitles[index].classList.add("show");
     descriptionDisplays[index].classList.add("show");
-    displayLines[index].classList.add("show");
     descriptionDisplays[index].innerHTML = description.value;
+    if (displayLines.length > index && displayLines[index]) {
+      displayLines[index].classList.add("show");
+    }
+    if (experinceTitles.length > index && experinceTitles[index]) {
+      experinceTitles[index].classList.add("show");
+    }
   } else {
     descriptionDisplays[index].classList.remove("show");
     descriptionDisplays[index].innerHTML = "";
   }
 }
-
 descriptions.forEach((description, index) => {
   description.addEventListener("keyup", () => {
     setDescription(index, description);
+    checkAllEmpty();
   });
 });
+function checkAllEmpty() {
+  const allInputs = [
+    ...positionInput,
+    ...employerInput,
+    ...startDateInputs,
+    ...endtDateInputs,
+    ...descriptions,
+  ];
+
+  const allEmpty = allInputs.every((input) => input.value.length < 2);
+
+  if (allEmpty) {
+    displayLines.forEach((line) => line.classList.remove("show"));
+    experinceTitles.forEach((title) => title.classList.remove("show"));
+  }
+}
