@@ -1,5 +1,6 @@
 const firstPage = document.querySelector(".first-page");
 const secondPage = document.querySelector(".second-page");
+const thirdPage = document.querySelector(".third-page");
 const nextBtn = document.querySelector(".next-btn");
 const previousBtn = document.querySelector(".back-btn");
 const fileInput = document.getElementById("image");
@@ -42,9 +43,9 @@ let employerLabel = document.querySelectorAll(".label-employer");
 let employerValidIcon = document.querySelectorAll(".employer-valid-icon");
 let employerInvalidIcon = document.querySelectorAll(".employer-invalid-icon");
 let startDateInputs = document.querySelectorAll(".start_date");
-let endtDateInputs = document.querySelectorAll(".end_date");
+let endDateInputs = document.querySelectorAll(".end_date");
 let startDateLabels = document.querySelectorAll(".label-start-date");
-let endtDateLabels = document.querySelectorAll(".label-end-date");
+let endDateLabels = document.querySelectorAll(".label-end-date");
 let displayPosition = document.querySelectorAll(".position-display");
 let displayEmployer = document.querySelectorAll(".employer-display");
 let startDateDisplay = document.querySelectorAll(".date-start-display");
@@ -56,6 +57,7 @@ let experinceTitles = document.querySelectorAll(".experince-title");
 let displayLines = document.querySelectorAll(".grey-line");
 let descriptionDisplays = document.querySelectorAll(".description-display");
 let experienceContainer = document.querySelector(".experience_display");
+const nextSecondBtn = document.querySelector(".next-second-btn");
 // მთავარი გვერდიდან გადასვლა შესავსებ აპლიკაციაში
 function goToGeneralInfo() {
   location.href = "./survey.html";
@@ -66,6 +68,7 @@ function goToLanding() {
   localStorage.clear();
 }
 // დაკლიკებით შემდეგ პირველი გვერდიდან მეორეზე გადასვლა თუ ვალიდურია
+
 nextBtn.addEventListener("click", function (e) {
   e.preventDefault();
   let isNameValid = nameValidation(),
@@ -82,6 +85,44 @@ nextBtn.addEventListener("click", function (e) {
   if (isFormValid) {
     firstPage.classList.add("hidden");
     secondPage.classList.add("show");
+  }
+});
+
+// დაკლიკებით შემდეგ მეორე გვერდიდან მესამეზე გადასვლა თუ ვალიდურია
+nextSecondBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  let isPositionValid = positionValidation(),
+    isEmployerValid = employerValidation(),
+    isDateValid = addEventListenersToDates(
+      startDateInputs[0],
+      endDateInputs[0],
+      startDateLabels[0],
+      endDateLabels[0]
+    ),
+    isDescriptionValid = descriptionValidation();
+  let isFormValid =
+    isPositionValid && isEmployerValid && isDateValid && isDescriptionValid;
+
+  // check if startDateInput and endDateInput are valid, and set classes/labels accordingly
+  if (startDateInputs[0].value === "") {
+    isFormValid = false;
+    startDateInputs[0].classList.add("invalid");
+    startDateLabels[0].style.color = "#e52f2f";
+  } else {
+    startDateInputs[0].classList.remove("invalid");
+    startDateLabels[0].style.color = "#000000";
+  }
+  if (endDateInputs[0].value === "") {
+    isFormValid = false;
+    endDateInputs[0].classList.add("invalid");
+    endDateLabels[0].style.color = "#e52f2f";
+  } else {
+    endDateInputs[0].classList.remove("invalid");
+    endDateLabels[0].style.color = "#000000";
+  }
+  if (isFormValid) {
+    secondPage.classList.add("hidden");
+    thirdPage.classList.add("show");
   }
 });
 // მეორე გვერდიდან პირველზე დაბრუნება
@@ -259,10 +300,12 @@ phoneNumberInp.addEventListener("keydown", function (e) {
 });
 phoneNumber.addEventListener("input", phoneValidation);
 // თანამდებობის ვალიდაცია
-function positionValidation(position, index) {
-  if (position.value.length >= 2) {
+function positionValidation(position = positionInput[0], index = 0) {
+  if (position && position.value && position.value.length >= 2) {
     position.classList.add("valid");
-    position.classList.remove("invalid");
+    if (position.classList.contains("invalid")) {
+      position.classList.remove("invalid");
+    }
     if (positionLabel.length > index && positionLabel[index]) {
       positionLabel[index].style.color = "#000000";
     }
@@ -275,8 +318,12 @@ function positionValidation(position, index) {
     position.style.outline = "none";
     return true;
   } else {
-    position.classList.remove("valid");
-    position.classList.add("invalid");
+    if (position && position.classList.contains("valid")) {
+      position.classList.remove("valid");
+    }
+    if (position) {
+      position.classList.add("invalid");
+    }
     if (positionLabel.length > index && positionLabel[index]) {
       positionLabel[index].style.color = "#e52f2f";
     }
@@ -286,23 +333,29 @@ function positionValidation(position, index) {
     if (positionInvalidIcon.length > index && positionInvalidIcon[index]) {
       positionInvalidIcon[index].classList.add("show");
     }
-    position.style.outline = "none";
+    if (position) {
+      position.style.outline = "none";
+    }
     return false;
   }
 }
 positionInput.forEach((position, index) => {
-  position.addEventListener("input", () => {
-    positionValidation(position, index);
-  });
+  if (position && position.value && position.value.length >= 2) {
+    position.addEventListener("input", () => {
+      positionValidation(position, index);
+    });
+  }
 });
 positionLabel[0].addEventListener("change", () => {
   positionValidation(positionInput[0], 0);
 });
 //დამსაქმებლის ვალიდაცია
-function employerValidation(employer, index) {
-  if (employer.value.length >= 2) {
+function employerValidation(employer = employerInput[0], index = 0) {
+  if (employer && employer.value && employer.value.length >= 2) {
     employer.classList.add("valid");
-    employer.classList.remove("invalid");
+    if (employer.classList.contains("invalid")) {
+      employer.classList.remove("invalid");
+    }
     if (employerLabel.length > index && employerLabel[index]) {
       employerLabel[index].style.color = "#000000";
     }
@@ -315,8 +368,12 @@ function employerValidation(employer, index) {
     employer.style.outline = "none";
     return true;
   } else {
-    employer.classList.remove("valid");
-    employer.classList.add("invalid");
+    if (employer && employer.classList.contains("valid")) {
+      employer.classList.remove("valid");
+    }
+    if (employer) {
+      employer.classList.add("invalid");
+    }
     if (employerLabel.length > index && employerLabel[index]) {
       employerLabel[index].style.color = "#e52f2f";
     }
@@ -326,15 +383,19 @@ function employerValidation(employer, index) {
     if (employerInvalidIcon.length > index && employerInvalidIcon[index]) {
       employerInvalidIcon[index].classList.add("show");
     }
-    employer.style.outline = "none";
+    if (employer) {
+      employer.style.outline = "none";
+    }
     return false;
   }
 }
 
 employerInput.forEach((employer, index) => {
-  employer.addEventListener("input", () => {
-    employerValidation(employer, index);
-  });
+  if (employer && employer.value && employer.value.length >= 2) {
+    position.addEventListener("input", () => {
+      employerValidation(employer, index);
+    });
+  }
 });
 
 employerLabel[0].addEventListener("change", () => {
@@ -343,86 +404,94 @@ employerLabel[0].addEventListener("change", () => {
 // თარიღის ვალიდაცია
 function addEventListenersToDates(
   startDateInput,
-  endtDateInput,
+  endDateInput,
   startDateLabel,
-  endtDateLabel
+  endDateLabel
 ) {
   startDateInput.max = new Date().toISOString().split("T")[0];
   startDateInput.addEventListener("input", function (event) {
-    endtDateInput.min = event.target.value;
-    let valid = false;
-    if (startDateInput.value != "") {
+    endDateInput.min = event.target.value;
+    if (startDateInput.value.length != "") {
       startDateInput.classList.add("valid");
       startDateInput.classList.remove("invalid");
       startDateLabel.style.color = "#000000";
       startDateInput.style.outline = "none";
-      valid = true;
     } else {
       startDateInput.classList.remove("valid");
       startDateInput.classList.add("invalid");
       startDateLabel.style.color = "#e52f2f";
       startDateInput.style.outline = "none";
     }
-    return valid;
   });
   startDateInput.addEventListener("change", () => {
     checkAllEmpty();
   });
   startDateInput.addEventListener("change", setStartDate);
-  endtDateInput.max = new Date().toISOString().split("T")[0];
-  endtDateInput.addEventListener("input", function endDateValidation(event) {
+  endDateInput.max = new Date().toISOString().split("T")[0];
+  endDateInput.addEventListener("input", function endDateValidation(event) {
     const startDateValue = new Date(startDateInput.value);
     const endDateValue = new Date(event.target.value);
     if (endDateValue < startDateValue) {
       event.target.value = startDateInput.value;
     }
-    let valid = false;
-    if (endtDateInput.value != "") {
-      endtDateInput.classList.add("valid");
-      endtDateInput.classList.remove("invalid");
-      endtDateLabel.style.color = "#000000";
-      endtDateInput.style.outline = "none";
-      valid = true;
+    if (endDateInput.value != "") {
+      endDateInput.classList.add("valid");
+      endDateInput.classList.remove("invalid");
+      endDateLabel.style.color = "#000000";
+      endDateInput.style.outline = "none";
     } else {
-      endtDateInput.classList.remove("valid");
-      endtDateInput.classList.add("invalid");
-      endtDateLabel.style.color = "#e52f2f";
-      endtDateInput.style.outline = "none";
+      endDateInput.classList.remove("valid");
+      endDateInput.classList.add("invalid");
+      endDateLabel.style.color = "#e52f2f";
+      endDateInput.style.outline = "none";
     }
-    return valid;
   });
-  endtDateInput.addEventListener("change", () => {
+  endDateInput.addEventListener("change", () => {
     checkAllEmpty();
   });
-  endtDateInput.addEventListener("change", setEndDate);
+  endDateInput.addEventListener("change", setEndDate);
+
+  // Return true if both inputs are valid, false otherwise
+  return startDateInput.value !== "" && endDateInput.value !== "";
 }
 for (let i = 0; i < startDateInputs.length; i++) {
   addEventListenersToDates(
     startDateInputs[i],
-    endtDateInputs[i],
+    endDateInputs[i],
     startDateLabels[i],
-    endtDateLabels[i]
+    endDateLabels[i]
   );
 }
 addEventListenersToDates(
   startDateInputs[startDateInputs.length - 1],
-  endtDateInputs[endtDateInputs.length - 1],
+  endDateInputs[endDateInputs.length - 1],
   startDateLabels[startDateLabels.length - 1],
-  endtDateLabels[endtDateLabels.length - 1]
+  endDateLabels[endDateLabels.length - 1]
 );
 // აღწერის TextArea-ს ვალიდაცია
-function descriptionValidation(description, index) {
-  if (description.value !== "") {
+function descriptionValidation(description = descriptions[0], index = 0) {
+  if (description && description.value && description.value !== "") {
     description.classList.add("valid");
+    if (description.classList.contains("invalid")) {
+      description.classList.remove("invalid");
+    }
     description.classList.remove("invalid");
-    descriptionLabels[index].style.color = "#000000";
+    descriptionLabels[index] &&
+      (descriptionLabels[index].style.color = "#000000");
     description.style.outline = "none";
     return true;
   } else {
-    description.classList.remove("valid");
-    description.classList.add("invalid");
-    descriptionLabels[index].style.color = "#e52f2f";
-    description.style.outline = "none";
+    if (description && description.classList.contains("valid")) {
+      description.classList.remove("valid");
+    }
+    if (description) {
+      description.classList.add("invalid");
+    }
+    descriptionLabels[index] &&
+      (descriptionLabels[index].style.color = "#e52f2f");
+    if (description) {
+      description.style.outline = "none";
+    }
     return false;
   }
 }
@@ -431,11 +500,25 @@ descriptions.forEach((description, index) => {
     descriptionValidation(description, index);
   });
 });
+descriptions.forEach((description, index) => {
+  if (description && description.value && description.value.length >= 2) {
+    description.addEventListener("input", () => {
+      descriptionValidation(description, index);
+    });
+  }
+});
 descriptionLabels[0].addEventListener("change", () => {
   descriptionValidation(descriptions[0], 0);
 });
 // მეტი გამოცდილების დამატება
+const MAX_FIELDS = 5;
 function add_more_field() {
+  const form = document.querySelector(".moreExp");
+  if (form.children.length >= MAX_FIELDS) {
+    const addButton = document.querySelector(".more-experience-btn");
+    addButton.disabled = true; // disable the "Add More" button
+    return; // exit the function
+  }
   const html = ` <div class="form-container">
  <div class="input-field">
    <span class="position-valid-icon">
@@ -515,7 +598,7 @@ function add_more_field() {
  </div>
  </div>
  <div class="border-grey-line"></div>`;
-  const form = document.querySelector(".moreExp");
+
   form.insertAdjacentHTML("beforeend", html);
   addMoreExpDisplay();
   descriptions = document.querySelectorAll(".description");
@@ -533,11 +616,13 @@ function add_more_field() {
   displayEmployer = document.querySelectorAll(".employer-display");
   descriptionDisplays = document.querySelectorAll(".description-display");
   startDateInputs = document.querySelectorAll(".start_date");
-  endtDateInputs = document.querySelectorAll(".end_date");
+  endDateInputs = document.querySelectorAll(".end_date");
   startDateLabels = document.querySelectorAll(".label-start-date");
-  endtDateLabels = document.querySelector(".label-end-date");
+  endDateLabels = document.querySelector(".label-end-date");
   startDateDisplay = document.querySelectorAll(".date-start-display");
   endDateDisplay = document.querySelectorAll(".date-end-display");
+  const addButton = document.querySelector(".more-experience-btn");
+  addButton.disabled = form.children.length >= MAX_FIELDS;
   const lastIndex = descriptions.length - 1;
   const lastIndex_2 = positionInput.length - 1;
   const lastIndex_3 = employerInput.length - 1;
@@ -556,33 +641,28 @@ function add_more_field() {
 
   addEventListenersToDates(
     startDateInputs[startDateInputs.length - 1],
-    endtDateInputs[endtDateInputs.length - 1],
+    endDateInputs[endDateInputs.length - 1],
     startDateLabels[startDateLabels.length - 1],
-    endtDateLabels
+    endDateLabels
   );
   // თანამდებობის
-  positionInput[lastIndex_2].addEventListener("keyup", () => {
-    setPosition(
-      lastIndex_2,
-      positionInput[lastIndex_2],
-      displayLines[lastIndex_2]
-    );
-    checkAllEmpty();
+  const positionInputs = document.querySelectorAll(".position-input");
+  positionInputs.forEach((position, index) => {
+    position.addEventListener("input", () => {
+      positionValidation(position, index);
+    });
+    position.addEventListener("keyup", () => {
+      setPosition(index, positionInputs[index], displayLines[index]);
+      checkAllEmpty();
+    });
+    positionValidation(position, index);
+    setPosition(index, positionInputs[index], displayLines[index]);
+    position.classList.remove("invalid");
+    if (positionInvalidIcon.length > index && positionInvalidIcon[index]) {
+      positionInvalidIcon[index].classList.remove("show");
+      positionLabel[index].style.color = "#000000";
+    }
   });
-  positionValidation(positionInput[lastIndex_2], lastIndex_2);
-  setPosition(
-    lastIndex_2,
-    positionInput[lastIndex_2],
-    displayLines[lastIndex_2]
-  );
-  positionInput[lastIndex_2].classList.remove("invalid");
-  if (
-    positionInvalidIcon.length > lastIndex_2 &&
-    positionInvalidIcon[lastIndex_2]
-  ) {
-    positionInvalidIcon[lastIndex_2].classList.remove("show");
-    positionLabel[lastIndex_2].style.color = "#000000";
-  }
   //დამსაქმებლის
   employerInput[lastIndex_3].addEventListener("keyup", () => {
     setEmployer(
@@ -777,20 +857,20 @@ startDateInputs.forEach(function (startDateInput) {
 });
 // დასრულების თარიღი
 function setEndDate(e) {
-  const index = Array.from(endtDateInputs).indexOf(e.target);
+  const index = Array.from(endDateInputs).indexOf(e.target);
   if (e.target.value.length > 1) {
     endDateDisplay[index].innerHTML = "- " + " " + e.target.value;
   } else {
     endDateDisplay[index].innerHTML = "";
   }
 }
-endtDateInputs.forEach(function (endtDateInput) {
-  endtDateInput.addEventListener("change", () => {
+endDateInputs.forEach(function (endDateInput) {
+  endDateInput.addEventListener("change", () => {
     checkAllEmpty();
   });
 });
-endtDateInputs.forEach(function (endtDateInput) {
-  endtDateInput.addEventListener("change", setEndDate);
+endDateInputs.forEach(function (endDateInput) {
+  endDateInput.addEventListener("change", setEndDate);
 });
 // endtDateInput.addEventListener("change", setEndDate);
 // აღწერის
@@ -820,7 +900,7 @@ function checkAllEmpty() {
     ...positionInput,
     ...employerInput,
     ...startDateInputs,
-    ...endtDateInputs,
+    ...endDateInputs,
     ...descriptions,
   ];
 
