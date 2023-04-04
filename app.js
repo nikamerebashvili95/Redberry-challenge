@@ -3,6 +3,7 @@ const secondPage = document.querySelector(".second-page");
 const thirdPage = document.querySelector(".third-page");
 const nextBtn = document.querySelector(".next-btn");
 const previousBtn = document.querySelector(".back-btn");
+const previousSecondBtn = document.querySelector(".back-second-btn");
 const fileInput = document.getElementById("image");
 const imagePreview = document.querySelector(".resume--photo");
 const imgValidIcon = document.querySelector(".img-valid-icon");
@@ -83,45 +84,76 @@ nextBtn.addEventListener("click", function (e) {
     isPhoneValid &&
     isImgValid;
   if (isFormValid) {
-    firstPage.classList.add("hidden");
     secondPage.classList.add("show");
+    firstPage.classList.add("hidden");
   }
 });
 
 // დაკლიკებით შემდეგ მეორე გვერდიდან მესამეზე გადასვლა თუ ვალიდურია
 nextSecondBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  let isPositionValid = positionValidation(),
-    isEmployerValid = employerValidation(),
-    isDateValid = addEventListenersToDates(
-      startDateInputs[0],
-      endDateInputs[0],
-      startDateLabels[0],
-      endDateLabels[0]
-    ),
-    isDescriptionValid = descriptionValidation();
-  let isFormValid =
-    isPositionValid && isEmployerValid && isDateValid && isDescriptionValid;
+  let isFormValid = true;
+  positionInput.forEach((position, index) => {
+    let isValid = positionValidation(position, index, positionInput);
+    if (!isValid) {
+      isFormValid = false;
+    }
+  });
+  employerInput.forEach((employer, index) => {
+    let isValid = employerValidation(employer, index, employerInput);
+    if (!isValid) {
+      isFormValid = false;
+    }
+  });
+  descriptions.forEach((description, index) => {
+    let isValid = descriptionValidation(description, index, descriptions);
+    if (!isValid) {
+      isFormValid = false;
+    }
+  });
+  // Select all start and end date inputs, including newly added fields
+  let startDateInputs = document.querySelectorAll(".start_date");
+  let endDateInputs = document.querySelectorAll(".end_date");
 
-  // check if startDateInput and endDateInput are valid, and set classes/labels accordingly
-  if (startDateInputs[0].value === "") {
-    isFormValid = false;
-    startDateInputs[0].classList.add("invalid");
-    startDateLabels[0].style.color = "#e52f2f";
-  } else {
-    startDateInputs[0].classList.remove("invalid");
-    startDateLabels[0].style.color = "#000000";
-  }
-  if (endDateInputs[0].value === "") {
-    isFormValid = false;
-    endDateInputs[0].classList.add("invalid");
-    endDateLabels[0].style.color = "#e52f2f";
-  } else {
-    endDateInputs[0].classList.remove("invalid");
-    endDateLabels[0].style.color = "#000000";
-  }
-  if (isFormValid) {
-    secondPage.classList.add("hidden");
+  // Loop through all start and end date inputs, checking their validity
+  let isFormValidDate = true;
+  startDateInputs.forEach(function (startDateInput, index) {
+    let endDateInput = endDateInputs[index];
+    let startDateLabel = startDateInput
+      .closest(".form-container")
+      .querySelector(".label-start-date");
+    let endDateLabel = endDateInput
+      .closest(".form-container")
+      .querySelector(".label-end-date");
+
+    let isDateValid = addEventListenersToDates(
+      startDateInput,
+      endDateInput,
+      startDateLabel,
+      endDateLabel
+    );
+
+    if (startDateInput.value === "") {
+      isFormValidDate = false;
+      startDateInput.classList.add("invalid");
+      startDateLabel.style.color = "#e52f2f";
+    } else {
+      startDateInput.classList.remove("invalid");
+      startDateLabel.style.color = "#000000";
+    }
+
+    if (endDateInput.value === "") {
+      isFormValidDate = false;
+      endDateInput.classList.add("invalid");
+      endDateLabel.style.color = "#e52f2f";
+    } else {
+      endDateInput.classList.remove("invalid");
+      endDateLabel.style.color = "#000000";
+    }
+  });
+
+  if (isFormValid && isFormValidDate) {
+    secondPage.classList.remove("show");
     thirdPage.classList.add("show");
   }
 });
@@ -131,13 +163,18 @@ function backPage(e) {
   if (previousBtn) {
     secondPage.classList.remove("show");
     firstPage.classList.remove("hidden");
-  } else {
-    secondPage.classList.add("show");
-    firstPage.classList.add("hidden");
   }
 }
 previousBtn.addEventListener("click", backPage);
-
+//მესამე გვერდიდან მეორეზე დაბრუნება
+function backSecondPage(e) {
+  e.preventDefault();
+  if (previousSecondBtn) {
+    thirdPage.classList.remove("show");
+    secondPage.classList.add("show");
+  }
+}
+previousSecondBtn.addEventListener("click", backSecondPage);
 // ფოტოს ატვირთვა და გამოჩენა მარჯვნივ
 function saveFile() {
   while (imagePreview.firstChild) {
@@ -300,7 +337,7 @@ phoneNumberInp.addEventListener("keydown", function (e) {
 });
 phoneNumber.addEventListener("input", phoneValidation);
 // თანამდებობის ვალიდაცია
-function positionValidation(position = positionInput[0], index = 0) {
+function positionValidation(position, index, allPositions) {
   if (position && position.value && position.value.length >= 2) {
     position.classList.add("valid");
     if (position.classList.contains("invalid")) {
@@ -350,7 +387,7 @@ positionLabel[0].addEventListener("change", () => {
   positionValidation(positionInput[0], 0);
 });
 //დამსაქმებლის ვალიდაცია
-function employerValidation(employer = employerInput[0], index = 0) {
+function employerValidation(employer, index, allEmployer) {
   if (employer && employer.value && employer.value.length >= 2) {
     employer.classList.add("valid");
     if (employer.classList.contains("invalid")) {
@@ -469,7 +506,7 @@ addEventListenersToDates(
   endDateLabels[endDateLabels.length - 1]
 );
 // აღწერის TextArea-ს ვალიდაცია
-function descriptionValidation(description = descriptions[0], index = 0) {
+function descriptionValidation(description, index, allDescription) {
   if (description && description.value && description.value !== "") {
     description.classList.add("valid");
     if (description.classList.contains("invalid")) {
@@ -628,22 +665,22 @@ function add_more_field() {
   const lastIndex_3 = employerInput.length - 1;
   // add event listeners to new elements
   descriptions[lastIndex].addEventListener("input", () => {
-    descriptionValidation(descriptions[lastIndex], lastIndex);
+    descriptionValidation(descriptions[lastIndex], lastIndex, descriptions);
   });
 
   positionInput[lastIndex_2].addEventListener("input", () => {
-    positionValidation(positionInput[lastIndex_2], lastIndex_2);
+    positionValidation(positionInput[lastIndex_2], lastIndex_2, positionInput);
   });
 
   employerInput[lastIndex_3].addEventListener("input", () => {
-    employerValidation(employerInput[lastIndex_3], lastIndex_3);
+    employerValidation(employerInput[lastIndex_3], lastIndex_3, employerInput);
   });
 
   addEventListenersToDates(
     startDateInputs[startDateInputs.length - 1],
     endDateInputs[endDateInputs.length - 1],
     startDateLabels[startDateLabels.length - 1],
-    endDateLabels
+    endDateLabels[endDateLabels.length - 1]
   );
   // თანამდებობის
   const positionInputs = document.querySelectorAll(".position-input");
