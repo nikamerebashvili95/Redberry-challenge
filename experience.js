@@ -23,7 +23,6 @@ let descriptionDisplays = document.querySelectorAll(".description-display");
 let experienceContainer = document.querySelector(".experience_display");
 const nextSecondBtn = document.querySelector(".next-second-btn");
 const thirdPage = document.querySelector(".third-page");
-const previousSecondBtn = document.querySelector(".back-second-btn");
 // დაკლიკებით შემდეგ მეორე გვერდიდან მესამეზე გადასვლა თუ ვალიდურია
 nextSecondBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -92,15 +91,6 @@ nextSecondBtn.addEventListener("click", function (e) {
     thirdPage.classList.add("show");
   }
 });
-//მესამე გვერდიდან მეორეზე დაბრუნება
-function backSecondPage(e) {
-  e.preventDefault();
-  if (previousSecondBtn) {
-    thirdPage.classList.remove("show");
-    secondPage.classList.add("show");
-  }
-}
-previousSecondBtn.addEventListener("click", backSecondPage);
 // თანამდებობის ვალიდაცია
 function positionValidation(position, index) {
   if (position && position.value && position.value.length >= 2) {
@@ -271,7 +261,7 @@ addEventListenersToDates(
   endDateLabels[endDateLabels.length - 1]
 );
 // აღწერის TextArea-ს ვალიდაცია
-function descriptionValidation(description, index, allDescription) {
+function descriptionValidation(description, index) {
   if (description && description.value && description.value !== "") {
     description.classList.add("valid");
     if (description.classList.contains("invalid")) {
@@ -456,6 +446,10 @@ function add_more_field() {
     position.addEventListener("keyup", () => {
       setPosition(index, positionInputs[index], displayLines[index]);
       checkAllEmpty();
+      position.addEventListener("blur", () => {
+        position.classList.add("blur");
+        setPosition(index, position);
+      });
     });
     positionValidation(position, index);
     setPosition(index, positionInputs[index], displayLines[index]);
@@ -495,17 +489,18 @@ function add_more_field() {
   });
   descriptionValidation(descriptions[lastIndex], lastIndex);
   descriptions[lastIndex].classList.remove("invalid");
-  descriptionLabels[lastIndex_2].style.color = "#000000";
+  descriptionLabels[lastIndex].style.color = "#000000";
 }
-// function validateForm() {
-//   let valid = true;
-//   descriptions.forEach((description, index) => {
-//     if (!descriptionValidation(description, index)) {
-//       valid = false;
-//     }
-//   });
-//   return valid;
-// }
+/*
+function validateForm() {
+  let valid = true;
+  descriptions.forEach((description, index) => {
+    if (!descriptionValidation(description, index)) {
+      valid = false;
+    }
+  });
+  return valid;
+}
 var wholeForm = document.querySelector("#form");
 wholeForm.onsubmit = function (e) {
   e.preventDefault();
@@ -513,6 +508,7 @@ wholeForm.onsubmit = function (e) {
     wholeForm.submit();
   }
 };
+*/
 function addMoreExpDisplay() {
   const html = `
   <div class="experience_display">
@@ -539,7 +535,8 @@ function addMoreExpDisplay() {
 function setPosition(index, position) {
   if (positionValidation(position, index)) {
     displayPosition[index].classList.add("show");
-    displayPosition[index].innerHTML = position.value + ",";
+    displayPosition[index].innerHTML =
+      position.value + (position.classList.contains("blur") ? "," : "");
     if (displayLines.length > index && displayLines[index]) {
       displayLines[index].classList.add("show");
     }
@@ -552,9 +549,13 @@ function setPosition(index, position) {
   }
 }
 positionInput.forEach((position, index) => {
-  position.addEventListener("keyup", () => {
+  position.addEventListener("input", () => {
     setPosition(index, position);
     checkAllEmpty();
+  });
+  position.addEventListener("blur", () => {
+    position.classList.add("blur");
+    setPosition(index, position);
   });
 });
 // დამსაქმებლის
