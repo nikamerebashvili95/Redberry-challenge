@@ -1,3 +1,4 @@
+/*
 const firstPage = document.querySelector(".first-page");
 const secondPage = document.querySelector(".second-page");
 const thirdPage = document.querySelector(".third-page");
@@ -948,3 +949,4 @@ function checkAllEmpty() {
     experinceTitles.forEach((title) => title.classList.remove("show"));
   }
 }
+*/
