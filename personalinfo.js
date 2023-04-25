@@ -52,7 +52,7 @@ nextBtn.addEventListener("click", function (e) {
     islastNameValid = lastNameValidation(),
     isEmailValid = emailValidation(),
     isPhoneValid = phoneValidation(),
-    isImgValid = imgValid;
+    isImgValid = checkImg();
   let isFormValid =
     isNameValid &&
     islastNameValid &&
@@ -62,10 +62,6 @@ nextBtn.addEventListener("click", function (e) {
   if (isFormValid) {
     secondPage.classList.add("show");
     firstPage.classList.add("hidden");
-  } else {
-    imgValidIcon.classList.remove("show");
-    imglInvalidIcond.classList.add("show");
-    imgLabel.style.color = "#e52f2f";
   }
 });
 // მეორე გვერდიდან პირველზე დაბრუნება
@@ -88,9 +84,6 @@ function saveFile() {
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (file.type.startsWith("image/")) {
-      imgValidIcon.classList.add("show");
-      imglInvalidIcond.classList.remove("show");
-      imgLabel.style.color = "#000000";
       const img = document.createElement("img");
       img.classList.add("resume--photo");
       const reader = new FileReader();
@@ -100,25 +93,37 @@ function saveFile() {
       };
       reader.readAsDataURL(file);
       imagePreview.appendChild(img);
-    } else {
-      imgValidIcon.classList.remove("show");
-      imglInvalidIcond.classList.add("show");
-      imgLabel.style.color = "#e52f2f";
-      valid = false;
-      continue;
     }
   }
+
   if (files.length === 0) {
     imgValidIcon.classList.remove("show");
     imglInvalidIcond.classList.add("show");
     imgLabel.style.color = "#e52f2f";
     valid = false;
+  } else {
+    imgValidIcon.classList.add("show");
+    imglInvalidIcond.classList.remove("show");
+    imgLabel.style.color = "#000000";
+    valid = true;
   }
-  localStorage.setItem("imgValid", valid);
   return valid;
 }
 
 fileInput.addEventListener("change", saveFile);
+function checkImg() {
+  if (!!imagePreview.firstChild) {
+    imgValidIcon.classList.add("show");
+    imglInvalidIcond.classList.remove("show");
+    imgLabel.style.color = "#000000";
+    return true;
+  } else {
+    imgValidIcon.classList.remove("show");
+    imglInvalidIcond.classList.add("show");
+    imgLabel.style.color = "#e52f2f";
+    return false;
+  }
+}
 const previousImage = localStorage.getItem("imagePreview");
 const imgValid = localStorage.getItem("imgValid");
 if (previousImage) {
@@ -126,10 +131,20 @@ if (previousImage) {
   img.classList.add("resume--photo");
   img.src = previousImage;
   imagePreview.appendChild(img);
+  imgValidIcon.classList.add("show");
+  imglInvalidIcond.classList.remove("show");
+  imgLabel.style.color = "#000000";
 }
+/*
 if (imgValid === "true") {
-  saveFile();
-}
+  imgValidIcon.classList.add("show");
+  imglInvalidIcond.classList.remove("show");
+  imgLabel.style.color = "#000000";
+} else if (imgValid === "false") {
+  imgValidIcon.classList.remove("show");
+  imglInvalidIcond.classList.add("show");
+  imgLabel.style.color = "#e52f2f";
+}*/
 // სახელის ვალიდაცია
 function nameValidation() {
   const nameInput = document.getElementById("name");

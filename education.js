@@ -18,10 +18,7 @@ let educationDisplay = document.querySelectorAll(
 let qualityDisplay = document.querySelectorAll(".quality-display");
 const previousSecondBtn = document.querySelector(".back-second-btn");
 const addBtn = document.querySelector(".another-school-btn");
-addBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  addMoreField();
-});
+
 //მესამე გვერდიდან მეორეზე დაბრუნება
 function backSecondPage(e) {
   e.preventDefault();
@@ -48,6 +45,7 @@ function schoolValidation(school, index) {
       schoolInvalidIcon[index].classList.remove("show");
     }
     school.style.outline = "none";
+    localStorage.setItem("school" + index, school.value);
     return true;
   } else {
     if (school && school.classList.contains("valid")) {
@@ -71,12 +69,30 @@ function schoolValidation(school, index) {
     return false;
   }
 }
-schoolInput.forEach((school, index) => {
-  if (school && school.value && school.value.length >= 2) {
-    school.addEventListener("input", () => {
-      schoolValidation(school, index);
-    });
+for (let i = 0; i < schoolInput.length; i++) {
+  const schoolValue = localStorage.getItem("school" + i);
+  if (schoolValue) {
+    schoolInput[i].value = schoolValue;
+    schoolValidation(schoolInput[i], i);
   }
+}
+schoolInput.forEach((school, index) => {
+  const schoolValue = localStorage.getItem("school" + index);
+  if (schoolValue) {
+    schoolInput[index].value = schoolValue;
+    schoolValidation(schoolInput[index], index);
+  }
+
+  school.addEventListener("input", () => {
+    schoolValidation(school, index);
+    localStorage.setItem("school" + index, school.value);
+  });
+
+  school.addEventListener("change", () => {
+    if (school.value === "") {
+      localStorage.removeItem("school" + index);
+    }
+  });
 });
 schoolLabel[0].addEventListener("change", () => {
   schoolValidation(schoolInput[0], 0);
@@ -92,6 +108,7 @@ function qualityValidation() {
         .closest(".select-container")
         .querySelector(".quality-label").style.color = "#000000";
       quality.style.outline = "none";
+      localStorage.setItem("select" + index, quality.value);
       valid = true;
     } /*else {
       quality.classList.remove("valid");
@@ -106,10 +123,29 @@ function qualityValidation() {
   });
   return valid;
 }
+for (let i = 0; i < qualityInp.length; i++) {
+  const qualityValue = localStorage.getItem("select" + i);
+  if (qualityValue) {
+    qualityInp[i].value = qualityValue;
+    qualityValidation(qualityInp[i], i);
+    setQuality.call(qualityInp[i], qualityValue);
+  }
+}
+qualityInp.forEach((quality, index) => {
+  const qualityValue = localStorage.getItem("select" + index);
+  if (qualityValue) {
+    qualityInp[index].value = qualityValue;
+    qualityValidation(qualityInp[index], index);
+  }
 
-form.addEventListener("change", qualityValidation);
+  quality.addEventListener("input", () => {
+    qualityValidation(quality, index);
+    localStorage.setItem("select" + index, quality.value);
+  });
+});
+// form.addEventListener("change", qualityValidation);
 // დამთავრების თარიღის
-function addEventListenersToEndDates(endDateInput, endDateLabel) {
+function addEventListenersToEndDates(endDateInput, endDateLabel, index) {
   endDateInput.max = new Date().toISOString().split("T")[0];
   endDateInput.addEventListener("input", function (event) {
     if (endDateInput.value.length != "") {
@@ -126,57 +162,84 @@ function addEventListenersToEndDates(endDateInput, endDateLabel) {
   });
   endDateInput.addEventListener("change", () => {
     checkEmpty();
+    localStorage.setItem("endDateInput-" + index, endDateInput.value);
   });
   endDateInput.addEventListener("change", set_End_Date);
+  const stored_EndDate = localStorage.getItem("endDateInput-" + index);
+  if (stored_EndDate) {
+    endDateInput.value = stored_EndDate;
+  }
+  window.addEventListener("load", function () {
+    if (endDateInput.value !== "") {
+      endDateInput.classList.add("valid");
+      endDateLabel.style.color = "#000000";
+    }
+  });
   return endDateInput.value !== "";
 }
 for (let i = 0; i < inputEndDate.length; i++) {
-  addEventListenersToEndDates(inputEndDate[i], labelDate[i]);
+  addEventListenersToEndDates(inputEndDate[i], labelDate[i], i);
 }
 addEventListenersToEndDates(
   inputEndDate[inputEndDate.length - 1],
-  labelDate[labelDate.length - 1]
+  labelDate[labelDate.length - 1],
+  inputEndDate.length - 1
 );
 // განათლების აღწერის
-function educationDescriptionValidation(description, index) {
-  if (description && description.value && description.value !== "") {
-    description.classList.add("valid");
-    if (description.classList.contains("invalid")) {
-      description.classList.remove("invalid");
+function educationDescriptionValidation(education, index) {
+  if (education && education.value && education.value !== "") {
+    education.classList.add("valid");
+    if (education.classList.contains("invalid")) {
+      education.classList.remove("invalid");
     }
-    description.classList.remove("invalid");
+    education.classList.remove("invalid");
     educationLabel[index] && (educationLabel[index].style.color = "#000000");
-    description.style.outline = "none";
+    education.style.outline = "none";
+    localStorage.setItem("education" + index, education.value);
     return true;
   } else {
-    if (description && description.classList.contains("valid")) {
-      description.classList.remove("valid");
+    if (education && education.classList.contains("valid")) {
+      education.classList.remove("valid");
     }
-    if (description) {
-      description.classList.add("invalid");
+    if (education) {
+      education.classList.add("invalid");
     }
     educationLabel[index] && (educationLabel[index].style.color = "#e52f2f");
-    if (description) {
-      description.style.outline = "none";
+    if (education) {
+      education.style.outline = "none";
     }
     return false;
   }
 }
+for (let i = 0; i < educationInput.length; i++) {
+  const educationValue = localStorage.getItem("education" + i);
+  if (educationValue) {
+    educationInput[i].value = educationValue;
+    educationDescriptionValidation(educationInput[i], i);
+  }
+}
 educationInput.forEach((description, index) => {
+  const educationValue = localStorage.getItem("education" + index);
+  if (educationValue) {
+    educationInput[index].value = educationValue;
+    educationDescriptionValidation(educationInput[index], index);
+  }
+
   description.addEventListener("input", () => {
     educationDescriptionValidation(description, index);
+    localStorage.setItem("education" + index, description.value);
   });
-});
-educationInput.forEach((description, index) => {
-  if (description && description.value && description.value.length >= 1) {
-    description.addEventListener("input", () => {
-      educationDescriptionValidation(description, index);
-    });
-  }
+
+  description.addEventListener("change", () => {
+    if (description.value === "") {
+      localStorage.removeItem("education" + index);
+    }
+  });
 });
 descriptionLabels[0].addEventListener("change", () => {
   educationDescriptionValidation(educationInput[0], 0);
 });
+let clickedButton = false;
 const FIELDS_MAX = 5;
 function addMoreField() {
   const form = document.querySelector(".more-exp");
@@ -285,63 +348,120 @@ function addMoreField() {
 
   addEventListenersToEndDates(
     inputEndDate[inputEndDate.length - 1],
-    labelDate[labelDate.length - 1]
+    labelDate[labelDate.length - 1],
+    inputEndDate.length - 1
   );
 
   // სასწავლებლის
-  const schoolInputs = document.querySelectorAll(".school");
-  schoolInputs.forEach((school, index) => {
+  schoolInput.forEach((school, index) => {
+    const schoolValue = localStorage.getItem("school" + index);
+    if (schoolValue) {
+      schoolInput[index].value = schoolValue;
+      schoolValidation(schoolInput[index], index);
+    }
+
     school.addEventListener("input", () => {
       schoolValidation(school, index);
+      localStorage.setItem("school" + index, school.value);
+    });
+
+    school.addEventListener("change", () => {
+      if (school.value === "") {
+        localStorage.removeItem("school" + index);
+      }
     });
     school.addEventListener("keyup", () => {
-      setSchool(index, schoolInputs[index], displayGreyLine[index]);
+      setSchool(index, schoolInput[index], displayGreyLine[index]);
       checkEmpty();
-    });
-    school.addEventListener("blur", () => {
-      school.classList.add("blur");
-      setSchool(index, school);
+      school.addEventListener("blur", () => {
+        school.classList.add("blur");
+        setSchool(index, school);
+      });
     });
     schoolValidation(school, index);
-    setSchool(index, schoolInputs[index], displayGreyLine[index]);
+    setSchool(index, schoolInput[index], displayGreyLine[index]);
     school.classList.remove("invalid");
     if (schoolInvalidIcon.length > index && schoolInvalidIcon[index]) {
       schoolInvalidIcon[index].classList.remove("show");
       schoolLabel[index].style.color = "#000000";
     }
   });
-
+  for (let i = 0; i < schoolInput.length; i++) {
+    const schoolValue = localStorage.getItem("school" + i);
+    if (schoolValue) {
+      schoolInput[i].value = schoolValue;
+      if (schoolInput[i].value) {
+        schoolInput[i].classList.add("blur");
+      }
+      setSchool(i, schoolInput[i]);
+    }
+  }
   // აღწერის
-  educationInput[lastIndex].addEventListener("keyup", () => {
+  educationInput.forEach((education, index) => {
+    const educationValue = localStorage.getItem("education" + index);
+    if (educationValue) {
+      educationInput[index].value = educationValue;
+      educationDescriptionValidation(educationInput[index], index);
+    }
+
+    education.addEventListener("input", () => {
+      educationDescriptionValidation(education, index);
+      localStorage.setItem("education" + index, education.value);
+    });
+
+    education.addEventListener("change", () => {
+      if (education.value === "") {
+        localStorage.removeItem("education" + index);
+      }
+    });
+    education.addEventListener("keyup", () => {
+      set_Education_Description(
+        index,
+        educationInput[index],
+        displayGreyLine[index]
+      );
+      checkEmpty();
+    });
+    educationDescriptionValidation(education, index);
     set_Education_Description(
-      lastIndex,
-      educationInput[lastIndex],
-      displayGreyLine[lastIndex]
+      index,
+      educationInput[index],
+      displayGreyLine[index]
     );
-    checkEmpty();
-  });
-  educationDescriptionValidation(educationInput[lastIndex], lastIndex);
-  educationInput[lastIndex].classList.remove("invalid");
-  educationLabel[lastIndex].style.color = "#000000";
-}
-/*
-function formValidate() {
-  let valid = true;
-  educationInput.forEach((description, index) => {
-    if (!educationDescriptionValidation(description, index)) {
-      valid = false;
+    education.classList.remove("invalid");
+    if (educationLabel.length > index && educationLabel[index]) {
+      educationLabel[index].style.color = "#000000";
     }
   });
-  return valid;
-}
-var formwhole = document.querySelector("#form");
-formwhole.onsubmit = function (e) {
-  e.preventDefault();
-  if (formValidate()) {
-    formwhole.submit();
+  // ხარისხის
+  for (let i = 0; i < qualityInp.length; i++) {
+    const qualityValue = localStorage.getItem("select" + i);
+    if (qualityValue) {
+      qualityInp[i].value = qualityValue;
+      qualityValidation(qualityInp[i], i);
+      setQuality.call(qualityInp[i], qualityValue);
+    }
   }
-};
-*/
+  //////////////////////////////////////////////////////////
+  const callFunction = "addMoreField()";
+  const callsPrevious = JSON.parse(localStorage.getItem("callFunction")) || [];
+  if (clickedButton) {
+    callsPrevious.push(callFunction);
+    localStorage.setItem("callFunction", JSON.stringify(callsPrevious));
+  }
+}
+addBtn.addEventListener("click", () => {
+  clickedButton = true;
+  addMoreField();
+});
+document.addEventListener("DOMContentLoaded", function (event) {
+  const callsPrevious = JSON.parse(localStorage.getItem("callFunction"));
+  if (callsPrevious) {
+    for (const call of callsPrevious) {
+      eval(call);
+    }
+  }
+});
 function addMoreDisplay() {
   const html = `
   <div class="education">
@@ -365,22 +485,34 @@ function addMoreDisplay() {
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // სასწავლებლს
 function setSchool(index, school) {
+  const schoolValue = school.value;
   if (schoolValidation(school, index)) {
     displaySchool[index].classList.add("show");
     displaySchool[index].innerHTML =
-      school.value + (school.classList.contains("blur") ? "," : "");
+      schoolValue + (school.classList.contains("blur") ? "," : "");
     if (displayGreyLine.length > index && displayGreyLine[index]) {
       displayGreyLine[index].classList.add("show");
     }
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
+    localStorage.setItem("school" + index, schoolValue);
   } else {
     displaySchool[index].classList.remove("show");
     displaySchool[index].innerHTML = "";
+    localStorage.removeItem("school" + index);
   }
 }
-
+for (let i = 0; i < schoolInput.length; i++) {
+  const schoolValue = localStorage.getItem("school" + i);
+  if (schoolValue) {
+    schoolInput[i].value = schoolValue;
+    if (schoolInput[i].value) {
+      schoolInput[i].classList.add("blur");
+    }
+    setSchool(i, schoolInput[i]);
+  }
+}
 schoolInput.forEach((school, index) => {
   school.addEventListener("keyup", () => {
     setSchool(index, school);
@@ -393,7 +525,7 @@ schoolInput.forEach((school, index) => {
   });
 });
 // ხარისხის
-function setQuality() {
+function setQuality(quality) {
   const currentQualityInp = this;
   const index = Array.from(qualityInp).indexOf(currentQualityInp);
   const displayValue =
@@ -405,10 +537,11 @@ function setQuality() {
     }
     displayGreyLine[index].classList.add("show");
     qualityDisplay[index].innerHTML = displayValue;
-    // displaySchool[index].innerHTML += ",";
+    localStorage.setItem("select" + index, displayValue);
   } else {
     qualityDisplay[index].classList.remove("show");
     qualityDisplay[index].innerHTML = "";
+    localStorage.removeItem("select" + index);
   }
 }
 qualityInp.forEach((qualityInp) => {
@@ -419,6 +552,7 @@ function set_End_Date(e) {
   const index = Array.from(inputEndDate).indexOf(e.target);
   if (e.target.value.length > 1) {
     // displayendDate[index].classList.add("show");
+    labelDate[index].classList.add("show");
     displayendDate[index].innerHTML = e.target.value;
     if (displayGreyLine.length > index && displayGreyLine[index]) {
       displayGreyLine[index].classList.add("show");
@@ -426,11 +560,24 @@ function set_End_Date(e) {
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
+    localStorage.setItem("endDateInput-" + index, e.target.value);
   } else {
     // displayendDate[index].classList.remove("show");
     displayendDate[index].innerHTML = "";
+    localStorage.removeItem("endDateInput-" + index);
+    labelDate[index].classList.remove("show");
   }
 }
+window.addEventListener("load", function () {
+  for (let i = 0; i < inputEndDate.length; i++) {
+    const stored_Value = localStorage.getItem("endDateInput-" + i);
+    if (stored_Value) {
+      inputEndDate[i].value = stored_Value;
+      labelDate[i].classList.add("show");
+      displayendDate[i].innerHTML = stored_Value;
+    }
+  }
+});
 inputEndDate.forEach(function (endDateInput) {
   endDateInput.addEventListener("change", () => {
     checkEmpty();
@@ -440,24 +587,34 @@ inputEndDate.forEach(function (endDateInput) {
   endDateInput.addEventListener("change", set_End_Date);
 });
 // აღწერის
-function set_Education_Description(index, description) {
-  if (educationDescriptionValidation(description, 0)) {
+function set_Education_Description(index, education) {
+  const educationValue = education.value;
+  if (educationDescriptionValidation(education, index)) {
     educationDisplay[index].classList.add("show");
-    educationDisplay[index].innerHTML = description.value;
+    educationDisplay[index].innerHTML = educationValue;
     if (displayGreyLine.length > index && displayGreyLine[index]) {
       displayGreyLine[index].classList.add("show");
     }
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
+    localStorage.setItem("education" + index, educationValue);
   } else {
     educationDisplay[index].classList.remove("show");
     educationDisplay[index].innerHTML = "";
+    localStorage.removeItem("education" + index);
   }
 }
-educationInput.forEach((description, index) => {
-  description.addEventListener("keyup", () => {
-    set_Education_Description(index, description);
+for (let i = 0; i < educationInput.length; i++) {
+  const educationValue = localStorage.getItem("education" + i);
+  if (educationValue) {
+    educationInput[i].value = educationValue;
+    set_Education_Description(i, educationInput[i]);
+  }
+}
+educationInput.forEach((education, index) => {
+  education.addEventListener("keyup", () => {
+    set_Education_Description(index, education);
     checkEmpty();
   });
 });

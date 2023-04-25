@@ -14,7 +14,7 @@ let displayPosition = document.querySelectorAll(".position-display");
 let displayEmployer = document.querySelectorAll(".employer-display");
 let startDateDisplay = document.querySelectorAll(".date-start-display");
 let endDateDisplay = document.querySelectorAll(".date-end-display");
-const moreExperienceBtn = document.querySelector(".more-experience-btn");
+const addButton = document.querySelector(".more-experience-btn");
 let descriptions = document.querySelectorAll(".description");
 let descriptionLabels = document.querySelectorAll(".label-description");
 let experinceTitles = document.querySelectorAll(".experince-title");
@@ -108,6 +108,7 @@ function positionValidation(position, index) {
       positionInvalidIcon[index].classList.remove("show");
     }
     position.style.outline = "none";
+    localStorage.setItem("position" + index, position.value);
     return true;
   } else {
     if (position && position.classList.contains("valid")) {
@@ -131,16 +132,36 @@ function positionValidation(position, index) {
     return false;
   }
 }
-positionInput.forEach((position, index) => {
-  if (position && position.value && position.value.length >= 2) {
-    position.addEventListener("input", () => {
-      positionValidation(position, index);
-    });
+for (let i = 0; i < positionInput.length; i++) {
+  const positionValue = localStorage.getItem("position" + i);
+  if (positionValue) {
+    positionInput[i].value = positionValue;
+    positionValidation(positionInput[i], i);
   }
+}
+positionInput.forEach((position, index) => {
+  const positionValue = localStorage.getItem("position" + index);
+  if (positionValue) {
+    positionInput[index].value = positionValue;
+    positionValidation(positionInput[index], index);
+  }
+
+  position.addEventListener("input", () => {
+    positionValidation(position, index);
+    localStorage.setItem("position" + index, position.value);
+  });
+
+  position.addEventListener("change", () => {
+    if (position.value === "") {
+      localStorage.removeItem("position" + index);
+    }
+  });
 });
+
 positionLabel[0].addEventListener("change", () => {
   positionValidation(positionInput[0], 0);
 });
+
 //დამსაქმებლის ვალიდაცია
 function employerValidation(employer, index, allEmployer) {
   if (employer && employer.value && employer.value.length >= 2) {
@@ -158,6 +179,7 @@ function employerValidation(employer, index, allEmployer) {
       employerInvalidIcon[index].classList.remove("show");
     }
     employer.style.outline = "none";
+    localStorage.setItem("employer" + index, employer.value);
     return true;
   } else {
     if (employer && employer.classList.contains("valid")) {
@@ -181,10 +203,16 @@ function employerValidation(employer, index, allEmployer) {
     return false;
   }
 }
-
+for (let i = 0; i < employerInput.length; i++) {
+  const employerValue = localStorage.getItem("employer" + i);
+  if (employerValue) {
+    employerInput[i].value = employerValue;
+    employerValidation(employerInput[i], i);
+  }
+}
 employerInput.forEach((employer, index) => {
   if (employer && employer.value && employer.value.length >= 2) {
-    position.addEventListener("input", () => {
+    employer.addEventListener("input", () => {
       employerValidation(employer, index);
     });
   }
@@ -198,7 +226,8 @@ function addEventListenersToDates(
   startDateInput,
   endDateInput,
   startDateLabel,
-  endDateLabel
+  endDateLabel,
+  index
 ) {
   startDateInput.max = new Date().toISOString().split("T")[0];
   startDateInput.addEventListener("input", function (event) {
@@ -217,6 +246,7 @@ function addEventListenersToDates(
   });
   startDateInput.addEventListener("change", () => {
     checkAllEmpty();
+    localStorage.setItem("startDateInput_" + index, startDateInput.value);
   });
   startDateInput.addEventListener("change", setStartDate);
   endDateInput.max = new Date().toISOString().split("T")[0];
@@ -229,7 +259,7 @@ function addEventListenersToDates(
     if (endDateInput.value.length != "") {
       endDateInput.classList.add("valid");
       endDateInput.classList.remove("invalid");
-      endDateLabel.style.color = "#000000";
+      // endDateLabel.style.color = "#000000";
       endDateInput.style.outline = "none";
     } else {
       endDateInput.classList.remove("valid");
@@ -240,37 +270,59 @@ function addEventListenersToDates(
   });
   endDateInput.addEventListener("change", () => {
     checkAllEmpty();
+    localStorage.setItem("endDateInput_" + index, endDateInput.value);
   });
   endDateInput.addEventListener("change", setEndDate);
-
+  // Retrieve stored values
+  const storedStartDate = localStorage.getItem("startDateInput_" + index);
+  if (storedStartDate) {
+    startDateInput.value = storedStartDate;
+  }
+  const storedEndDate = localStorage.getItem("endDateInput_" + index);
+  if (storedEndDate) {
+    endDateInput.value = storedEndDate;
+  }
+  window.addEventListener("load", function () {
+    if (startDateInput.value !== "" && endDateInput.value !== "") {
+      startDateInput.classList.add("valid");
+      endDateInput.classList.add("valid");
+      startDateLabel.style.color = "#000000";
+      endDateLabel.style.color = "#000000";
+    }
+  });
   // Return true if both inputs are valid, false otherwise
   return startDateInput.value !== "" && endDateInput.value !== "";
 }
+
 for (let i = 0; i < startDateInputs.length; i++) {
   addEventListenersToDates(
     startDateInputs[i],
     endDateInputs[i],
     startDateLabels[i],
-    endDateLabels[i]
+    endDateLabels[i],
+    i
   );
 }
 addEventListenersToDates(
   startDateInputs[startDateInputs.length - 1],
   endDateInputs[endDateInputs.length - 1],
   startDateLabels[startDateLabels.length - 1],
-  endDateLabels[endDateLabels.length - 1]
+  endDateLabels[endDateLabels.length - 1],
+  startDateInputs.length - 1
 );
 // აღწერის TextArea-ს ვალიდაცია
 function descriptionValidation(description, index) {
-  if (description && description.value && description.value !== "") {
+  if (description && description.value && description.value.length > 0) {
     description.classList.add("valid");
     if (description.classList.contains("invalid")) {
       description.classList.remove("invalid");
     }
     description.classList.remove("invalid");
-    descriptionLabels[index] &&
-      (descriptionLabels[index].style.color = "#000000");
+    if (descriptionLabels.length > index && descriptionLabels[index]) {
+      descriptionLabels[index].style.color = "#000000";
+    }
     description.style.outline = "none";
+    localStorage.setItem("description" + index, description.value);
     return true;
   } else {
     if (description && description.classList.contains("valid")) {
@@ -279,31 +331,46 @@ function descriptionValidation(description, index) {
     if (description) {
       description.classList.add("invalid");
     }
-    descriptionLabels[index] &&
-      (descriptionLabels[index].style.color = "#e52f2f");
+    if (descriptionLabels.length > index && descriptionLabels[index]) {
+      descriptionLabels[index].style.color = "#e52f2f";
+    }
     if (description) {
       description.style.outline = "none";
     }
     return false;
   }
 }
+for (let i = 0; i < descriptions.length; i++) {
+  const descriptionValue = localStorage.getItem("description" + i);
+  if (descriptionValue) {
+    descriptions[i].value = descriptionValue;
+    descriptionValidation(descriptions[i], i);
+  }
+}
 descriptions.forEach((description, index) => {
+  const descriptionValue = localStorage.getItem("description" + index);
+  if (descriptionValue) {
+    descriptions[index].value = descriptionValue;
+    descriptionValidation(descriptions[index], index);
+  }
+
   description.addEventListener("input", () => {
     descriptionValidation(description, index);
+    localStorage.setItem("description" + index, description.value);
   });
-});
-descriptions.forEach((description, index) => {
-  if (description && description.value && description.value.length >= 2) {
-    description.addEventListener("input", () => {
-      descriptionValidation(description, index);
-    });
-  }
+
+  description.addEventListener("change", () => {
+    if (description.value === "") {
+      localStorage.removeItem("description" + index);
+    }
+  });
 });
 descriptionLabels[0].addEventListener("change", () => {
   descriptionValidation(descriptions[0], 0);
 });
 // მეტი გამოცდილების დამატება
 const MAX_FIELDS = 5;
+let buttonClicked = false;
 function add_more_field() {
   const form = document.querySelector(".moreExp");
   if (form.children.length >= MAX_FIELDS) {
@@ -311,7 +378,7 @@ function add_more_field() {
     addButton.disabled = true; // disable the "Add More" button
     return; // exit the function
   }
-  const html = ` <div class="form-container">
+  const html = `<div class="form-container">
  <div class="input-field">
    <span class="position-valid-icon">
      <img
@@ -364,7 +431,7 @@ function add_more_field() {
        >დაწყების რიცხვი</label
      >
      <input
-       type="date"
+       type="date"      
        class="date start_date"
      />
    </div>
@@ -430,21 +497,33 @@ function add_more_field() {
   employerInput[lastIndex_3].addEventListener("input", () => {
     employerValidation(employerInput[lastIndex_3], lastIndex_3, employerInput);
   });
-
   addEventListenersToDates(
     startDateInputs[startDateInputs.length - 1],
     endDateInputs[endDateInputs.length - 1],
     startDateLabels[startDateLabels.length - 1],
-    endDateLabels[endDateLabels.length - 1]
+    endDateLabels[endDateLabels.length - 1],
+    startDateInputs.length - 1 // pass the current index
   );
   // თანამდებობის
-  const positionInputs = document.querySelectorAll(".position-input");
-  positionInputs.forEach((position, index) => {
+  positionInput.forEach((position, index) => {
+    const positionValue = localStorage.getItem("position" + index);
+    if (positionValue) {
+      positionInput[index].value = positionValue;
+      positionValidation(positionInput[index], index);
+    }
+
     position.addEventListener("input", () => {
       positionValidation(position, index);
+      localStorage.setItem("position" + index, position.value);
+    });
+
+    position.addEventListener("change", () => {
+      if (position.value === "") {
+        localStorage.removeItem("position" + index);
+      }
     });
     position.addEventListener("keyup", () => {
-      setPosition(index, positionInputs[index], displayLines[index]);
+      setPosition(index, positionInput[index], displayLines[index]);
       checkAllEmpty();
       position.addEventListener("blur", () => {
         position.classList.add("blur");
@@ -452,63 +531,104 @@ function add_more_field() {
       });
     });
     positionValidation(position, index);
-    setPosition(index, positionInputs[index], displayLines[index]);
+    setPosition(index, positionInput[index], displayLines[index]);
     position.classList.remove("invalid");
     if (positionInvalidIcon.length > index && positionInvalidIcon[index]) {
       positionInvalidIcon[index].classList.remove("show");
       positionLabel[index].style.color = "#000000";
     }
   });
-  //დამსაქმებლის
-  employerInput[lastIndex_3].addEventListener("keyup", () => {
-    setEmployer(
-      lastIndex_3,
-      employerInput[lastIndex_3],
-      displayLines[lastIndex_3]
-    );
-    checkAllEmpty();
-  });
-  employerValidation(employerInput[lastIndex_3], lastIndex_3);
-  setEmployer(
-    lastIndex_3,
-    employerInput[lastIndex_3],
-    displayLines[lastIndex_3]
-  );
-  employerInput[lastIndex_3].classList.remove("invalid");
-  if (
-    employerInvalidIcon.length > lastIndex_3 &&
-    employerInvalidIcon[lastIndex_3]
-  ) {
-    employerInvalidIcon[lastIndex_3].classList.remove("show");
-    employerLabel[lastIndex_3].style.color = "#000000";
+  for (let i = 0; i < positionInput.length; i++) {
+    const positionValue = localStorage.getItem("position" + i);
+    if (positionValue) {
+      positionInput[i].value = positionValue;
+      if (positionInput[i].value) {
+        positionInput[i].classList.add("blur"); // Add the blur class to non-empty elements
+      }
+      setPosition(i, positionInput[i]); // Call setPosition with the stored value
+    }
   }
-  // აღწერის
-  descriptions[lastIndex].addEventListener("keyup", () => {
-    setDescription(lastIndex, descriptions[lastIndex], displayLines[lastIndex]);
-    checkAllEmpty();
-  });
-  descriptionValidation(descriptions[lastIndex], lastIndex);
-  descriptions[lastIndex].classList.remove("invalid");
-  descriptionLabels[lastIndex].style.color = "#000000";
-}
-/*
-function validateForm() {
-  let valid = true;
-  descriptions.forEach((description, index) => {
-    if (!descriptionValidation(description, index)) {
-      valid = false;
+  //დამსაქმებლის
+  employerInput.forEach((employer, index) => {
+    const employerValue = localStorage.getItem("employer" + index);
+    if (employerValue) {
+      employerInput[index].value = employerValue;
+      employerValidation(employerInput[index], index);
+    }
+
+    employer.addEventListener("input", () => {
+      employerValidation(employer, index);
+      localStorage.setItem("employer" + index, employer.value);
+    });
+
+    employer.addEventListener("change", () => {
+      if (employer.value === "") {
+        localStorage.removeItem("employer" + index);
+      }
+    });
+    employer.addEventListener("keyup", () => {
+      setEmployer(index, employerInput[index], displayLines[index]);
+      checkAllEmpty();
+    });
+    employerValidation(employer, index);
+    setEmployer(index, employerInput[index], displayLines[index]);
+    employer.classList.remove("invalid");
+    if (employerInvalidIcon.length > index && employerInvalidIcon[index]) {
+      employerInvalidIcon[index].classList.remove("show");
+      employerLabel[index].style.color = "#000000";
     }
   });
-  return valid;
-}
-var wholeForm = document.querySelector("#form");
-wholeForm.onsubmit = function (e) {
-  e.preventDefault();
-  if (validateForm()) {
-    wholeForm.submit();
+  // აღწერის
+  descriptions.forEach((description, index) => {
+    const descriptionValue = localStorage.getItem("description" + index);
+    if (descriptionValue) {
+      descriptions[index].value = descriptionValue;
+      descriptionValidation(descriptions[index], index);
+    }
+
+    description.addEventListener("input", () => {
+      descriptionValidation(description, index);
+      localStorage.setItem("description" + index, description.value);
+    });
+
+    description.addEventListener("change", () => {
+      if (description.value === "") {
+        localStorage.removeItem("description" + index);
+      }
+    });
+    description.addEventListener("keyup", () => {
+      setDescription(index, descriptions[index], displayLines[index]);
+      checkAllEmpty();
+    });
+    descriptionValidation(description, index);
+    setDescription(index, descriptions[index], displayLines[index]);
+    description.classList.remove("invalid");
+    if (descriptionLabels.length > index && descriptionLabels[index]) {
+      descriptionLabels[index].style.color = "#000000";
+    }
+  });
+  const functionCall = "add_more_field()";
+  const previousCalls = JSON.parse(localStorage.getItem("functionCalls")) || [];
+  if (buttonClicked) {
+    previousCalls.push(functionCall);
+    localStorage.setItem("functionCalls", JSON.stringify(previousCalls));
   }
-};
-*/
+}
+
+addButton.addEventListener("click", () => {
+  buttonClicked = true;
+  add_more_field();
+});
+
+// Retrieve the stored function calls on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", function (event) {
+  const previousCalls = JSON.parse(localStorage.getItem("functionCalls"));
+  if (previousCalls) {
+    for (const call of previousCalls) {
+      eval(call);
+    }
+  }
+});
 function addMoreExpDisplay() {
   const html = `
   <div class="experience_display">
@@ -533,19 +653,32 @@ function addMoreExpDisplay() {
 // მარჯვენა მხარეს წერისას პარალელურად გამოჩნდეს კონტენტი
 // თანამდებობის
 function setPosition(index, position) {
+  const positionValue = position.value;
   if (positionValidation(position, index)) {
     displayPosition[index].classList.add("show");
     displayPosition[index].innerHTML =
-      position.value + (position.classList.contains("blur") ? "," : "");
+      positionValue + (position.classList.contains("blur") ? "," : "");
     if (displayLines.length > index && displayLines[index]) {
       displayLines[index].classList.add("show");
     }
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
+    localStorage.setItem("position" + index, positionValue); // Store value in localStorage
   } else {
     displayPosition[index].classList.remove("show");
     displayPosition[index].innerHTML = "";
+    localStorage.removeItem("position" + index); // Remove value from localStorage if validation fails
+  }
+}
+for (let i = 0; i < positionInput.length; i++) {
+  const positionValue = localStorage.getItem("position" + i);
+  if (positionValue) {
+    positionInput[i].value = positionValue;
+    if (positionInput[i].value) {
+      positionInput[i].classList.add("blur"); // Add the blur class to non-empty elements
+    }
+    setPosition(i, positionInput[i]); // Call setPosition with the stored value
   }
 }
 positionInput.forEach((position, index) => {
@@ -560,6 +693,7 @@ positionInput.forEach((position, index) => {
 });
 // დამსაქმებლის
 function setEmployer(index, employer) {
+  const employerValue = employer.value;
   if (employerValidation(employer, index)) {
     displayEmployer[index].classList.add("show");
     displayEmployer[index].innerHTML = employer.value;
@@ -569,9 +703,18 @@ function setEmployer(index, employer) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
+    localStorage.setItem("employer" + index, employerValue);
   } else {
     displayEmployer[index].classList.remove("show");
     displayEmployer[index].innerHTML = "";
+    localStorage.removeItem("employer" + index);
+  }
+}
+for (let i = 0; i < employerInput.length; i++) {
+  const employerValue = localStorage.getItem("employer" + i);
+  if (employerValue) {
+    employerInput[i].value = employerValue;
+    setEmployer(i, employerInput[i]); // Call setPosition with the stored value
   }
 }
 employerInput.forEach((employer, index) => {
@@ -592,11 +735,24 @@ function setStartDate(e) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
+
+    localStorage.setItem("startDateInput_" + index, e.target.value);
   } else {
     startDateLabels[index].classList.remove("show");
     startDateDisplay[index].innerHTML = "";
+    localStorage.removeItem("startDateInput_" + index);
   }
 }
+window.addEventListener("load", function () {
+  for (let i = 0; i < startDateInputs.length; i++) {
+    const storedValue = localStorage.getItem("startDateInput_" + i);
+    if (storedValue) {
+      startDateDisplay[i].innerHTML = storedValue;
+      startDateLabels[i].classList.add("show");
+      startDateInputs[i].value = storedValue;
+    }
+  }
+});
 startDateInputs.forEach(function (startDateInput) {
   startDateInput.addEventListener("change", () => {
     checkAllEmpty();
@@ -610,10 +766,23 @@ function setEndDate(e) {
   const index = Array.from(endDateInputs).indexOf(e.target);
   if (e.target.value.length > 1) {
     endDateDisplay[index].innerHTML = "- " + " " + e.target.value;
+    localStorage.setItem("endDateInput_" + index, e.target.value);
   } else {
     endDateDisplay[index].innerHTML = "";
+    endDateLabels[index].classList.remove("show");
+    localStorage.removeItem("endDateInput_" + index);
   }
 }
+window.addEventListener("load", function () {
+  for (let i = 0; i < endDateInputs.length; i++) {
+    const storedValue = localStorage.getItem("endDateInput_" + i);
+    if (storedValue) {
+      endDateDisplay[i].innerHTML = "- " + " " + storedValue;
+      endDateLabels[i].classList.add("show");
+      endDateInputs[i].value = storedValue;
+    }
+  }
+});
 endDateInputs.forEach(function (endDateInput) {
   endDateInput.addEventListener("change", () => {
     checkAllEmpty();
@@ -624,22 +793,32 @@ endDateInputs.forEach(function (endDateInput) {
 });
 // აღწერის
 function setDescription(index, description) {
-  if (descriptionValidation(description, 0)) {
+  const descriptionValue = description.value;
+  if (descriptionValidation(description, index)) {
     descriptionDisplays[index].classList.add("show");
-    descriptionDisplays[index].innerHTML = description.value;
+    descriptionDisplays[index].innerHTML = descriptionValue;
     if (displayLines.length > index && displayLines[index]) {
       displayLines[index].classList.add("show");
     }
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
+    localStorage.setItem("description" + index, descriptionValue);
   } else {
     descriptionDisplays[index].classList.remove("show");
     descriptionDisplays[index].innerHTML = "";
+    localStorage.removeItem("description" + index);
+  }
+}
+for (let i = 0; i < descriptions.length; i++) {
+  const descriptionValue = localStorage.getItem("description" + i);
+  if (descriptionValue) {
+    descriptions[i].value = descriptionValue;
+    setDescription(i, descriptions[i]);
   }
 }
 descriptions.forEach((description, index) => {
-  description.addEventListener("keyup", () => {
+  description.addEventListener("input", () => {
     setDescription(index, description);
     checkAllEmpty();
   });
