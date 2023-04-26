@@ -36,7 +36,7 @@ const emailIcon = document.querySelector(".email-icon");
 const displayEmail = document.querySelector(".email-text");
 const aboutMeTitle = document.querySelector(".about_me-title");
 const displayAboutMe = document.querySelector(".about_me-text");
-
+const form = document.querySelector("form");
 // მთავარი გვერდიდან გადასვლა შესავსებ აპლიკაციაში
 function goToGeneralInfo() {
   location.href = "./survey.html";
@@ -78,7 +78,6 @@ function saveFile() {
   while (imagePreview.firstChild) {
     imagePreview.removeChild(imagePreview.firstChild);
   }
-
   const files = fileInput.files;
   let valid = true;
   for (let i = 0; i < files.length; i++) {
@@ -95,7 +94,6 @@ function saveFile() {
       imagePreview.appendChild(img);
     }
   }
-
   if (files.length === 0) {
     imgValidIcon.classList.remove("show");
     imglInvalidIcond.classList.add("show");
@@ -109,7 +107,6 @@ function saveFile() {
   }
   return valid;
 }
-
 fileInput.addEventListener("change", saveFile);
 function checkImg() {
   if (!!imagePreview.firstChild) {
@@ -216,7 +213,6 @@ function lastNameValidation() {
     lastNameInvalidIcond.classList.add("show");
     lastNameInput.style.outline = "none";
   }
-
   // Store name and validation result in localStorage only when isValid is true
   if (isValid) {
     localStorage.setItem("lastNameInputValue", lastNameInput.value);
@@ -225,17 +221,13 @@ function lastNameValidation() {
     localStorage.removeItem("lastNameInputValue");
     localStorage.removeItem("lastNameValidationResult");
   }
-
   return isValid;
 }
-
 lastNameInput.addEventListener("input", lastNameValidation);
-
 const previousLastName = localStorage.getItem("lastNameInputValue");
 if (previousLastName) {
   lastNameInput.value = previousLastName;
 }
-
 const previousResult_2 = localStorage.getItem("lastNameValidationResult");
 if (previousResult_2 === "true") {
   lastNameValidation();
@@ -294,8 +286,22 @@ if (emailValid === "true") {
 }
 //მობილური ნომრის ვალიდაცია
 function phoneValidation() {
+  const phonePattern = /^\+995\s\d{3}\s\d{2}\s\d{2}\s\d{2}$/;
   let valid = false;
-  if (phoneNumber.value.match(phonePattern)) {
+  let formattedPhone = phoneNumber.value.replace(/\D/g, "");
+  if (formattedPhone.length > 9) {
+    formattedPhone =
+      "+995 " +
+      formattedPhone.substring(3, 6) +
+      " " +
+      formattedPhone.substring(6, 8) +
+      " " +
+      formattedPhone.substring(8, 10) +
+      " " +
+      formattedPhone.substring(10);
+  }
+  if (formattedPhone.match(phonePattern)) {
+    phoneNumber.value = formattedPhone;
     phoneNumber.classList.add("valid");
     phoneNumber.classList.remove("invalid");
     numberLabel.style.color = "#000000";
@@ -303,7 +309,7 @@ function phoneValidation() {
     numberInvalidIcond.classList.remove("show");
     phoneNumber.style.outline = "none";
     valid = true;
-    localStorage.setItem("phoneInputValue", phoneNumber.value);
+    localStorage.setItem("phoneInputValue", formattedPhone);
     localStorage.setItem("phoneValid", valid);
   } else {
     phoneNumber.classList.remove("valid");
@@ -317,17 +323,6 @@ function phoneValidation() {
   }
   return valid;
 }
-phoneNumber.addEventListener("input", function (e) {
-  const txt = this.value;
-  if (
-    (txt.length == 4 ||
-      txt.length == 8 ||
-      txt.length == 11 ||
-      txt.length == 14) &&
-    e.which !== 8
-  )
-    this.value = this.value + " ";
-});
 phoneNumber.addEventListener("input", phoneValidation);
 const previousPhone = localStorage.getItem("phoneInputValue");
 const phoneValid = localStorage.getItem("phoneValid");

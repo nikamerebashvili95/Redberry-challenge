@@ -259,7 +259,7 @@ function addEventListenersToDates(
     if (endDateInput.value.length != "") {
       endDateInput.classList.add("valid");
       endDateInput.classList.remove("invalid");
-      // endDateLabel.style.color = "#000000";
+      endDateLabel.style.color = "#000000";
       endDateInput.style.outline = "none";
     } else {
       endDateInput.classList.remove("valid");
@@ -283,10 +283,12 @@ function addEventListenersToDates(
     endDateInput.value = storedEndDate;
   }
   window.addEventListener("load", function () {
-    if (startDateInput.value !== "" && endDateInput.value !== "") {
+    if (startDateInput.value !== "") {
       startDateInput.classList.add("valid");
-      endDateInput.classList.add("valid");
       startDateLabel.style.color = "#000000";
+    }
+    if (endDateInput.value !== "") {
+      endDateInput.classList.add("valid");
       endDateLabel.style.color = "#000000";
     }
   });
