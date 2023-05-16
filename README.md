@@ -43,5 +43,5 @@ The design should be completed on one resolutions:
 
 ## Author
 
-- GitHub - [Tekla Inashvili](https://github.com/nikamerebashvili95)
-- LinkedIn - [Tekla Inashvili](https://www.linkedin.com/in/nikamerebashvili)
+- GitHub - [Nika Merebashvili](https://github.com/nikamerebashvili95)
+- LinkedIn - [Nika Merebashvili](https://www.linkedin.com/in/nikamerebashvili)
