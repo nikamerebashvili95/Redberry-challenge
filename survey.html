@@ -27,7 +27,7 @@
         </button>
       </div>
       <div class="left">
-        <form id="form">
+        <form id="form" class="form" method="post">
           <div class="first-page">
             <header>
               <div class="header-container">
@@ -61,6 +61,7 @@
                     placeholder="ანზორ"
                     lang="ka"
                     onkeypress="return /[\u10A0-\u10FF]/i.test(event.key)"
+                    required
                   />
                   <label class="label-bottom"
                     >მინიმუმ 2 ასო, ქართული ასოები</label
@@ -89,6 +90,7 @@
                     placeholder="მუმლაძე"
                     lang="ka"
                     onkeypress="return /[\u10A0-\u10FF]/i.test(event.key)"
+                    required
                   />
                   <label class="label-bottom"
                     >მინიმუმ 2 ასო, ქართული ასოები</label
@@ -115,9 +117,8 @@
                     <input
                       id="image"
                       type="file"
-                      name="image"
+                      accept="image/*"
                       style="display: none"
-                      multiple
                     />
                   </label>
                 </div>
@@ -126,11 +127,7 @@
                 <label class="label-top" for="about-me"
                   >ჩემ შესახებ (არასავალდებულო)</label
                 >
-                <textarea
-                  id="about-me"
-                  class="input about-input"
-                  name="about"
-                ></textarea>
+                <textarea id="about-me" class="input about-input"></textarea>
               </div>
 
               <div class="input-field input-email-field">
@@ -178,8 +175,7 @@
                 <input
                   id="phone-number"
                   class="input input-phone-number"
-                  type="tel"
-                  name="phone"
+                  type="text"
                   placeholder="+995 551 12 34 56"
                   maxlength="17"
                 />
@@ -188,7 +184,7 @@
                 >
               </div>
               <div class="next-btn-container">
-                <button class="btn next-btn">შემდეგი</button>
+                <button type="button" class="btn next-btn">შემდეგი</button>
               </div>
             </div>
           </div>
@@ -214,9 +210,7 @@
                     alt="invalid icon"
                   />
                 </span>
-                <label class="label-top label-position" for="position-input"
-                  >თანამდებობა</label
-                >
+                <label class="label-top label-position">თანამდებობა</label>
                 <input
                   class="input position-input"
                   type="text"
@@ -237,9 +231,7 @@
                     alt="invalid icon"
                   />
                 </span>
-                <label class="label-top label-employer" for="employer-input"
-                  >დამსაქმებელი</label
-                >
+                <label class="label-top label-employer">დამსაქმებელი</label>
                 <input
                   class="input employer-input"
                   type="text"
@@ -249,25 +241,23 @@
               </div>
               <div class="date-container">
                 <div class="input-field left-date">
-                  <label class="label-top label-start-date" for="startdate"
+                  <label class="label-top label-start-date"
                     >დაწყების რიცხვი</label
                   >
                   <input type="date" class="date start_date" />
                 </div>
                 <div class="input-field right-date">
-                  <label class="label-top label-end-date" for="end-date"
+                  <label class="label-top label-end-date"
                     >დამთავრების რიცხვი</label
                   >
                   <input type="date" class="date end_date" />
                 </div>
               </div>
               <div class="input-field about-field">
-                <label class="label-top label-description" for="description"
-                  >აღწერა</label
-                >
+                <label class="label-top label-description">აღწერა</label>
                 <textarea
                   class="input about-input description"
-                  name="about"
+                  type="text"
                   placeholder="როლი თანამდებობაზე და ზოგადი აღწერა"
                 ></textarea>
               </div>
@@ -306,9 +296,7 @@
                     alt="invalid icon"
                   />
                 </span>
-                <label class="label-top school-label" for="education"
-                  >სასწავლებელი</label
-                >
+                <label class="label-top school-label">სასწავლებელი</label>
                 <input
                   class="input school"
                   type="text"
@@ -318,10 +306,8 @@
               </div>
               <div class="select-container">
                 <div class="input-field">
-                  <label for="select" class="label-top quality-label"
-                    >ხარისხი</label
-                  >
-                  <select class="select" name="selected">
+                  <label class="label-top quality-label">ხარისხი</label>
+                  <select class="select">
                     <option value="" disabled selected>აირჩიე ხარისხი</option>
                     <option value="საშუალო სკოლის დიპლომი">
                       საშუალო სკოლის დიპლომი
@@ -343,9 +329,7 @@
                   </select>
                 </div>
                 <div class="input-field right-date">
-                  <label class="label-top date-label" for="date"
-                    >დამთავრების რიცხვი</label
-                  >
+                  <label class="label-top date-label">დამთავრების რიცხვი</label>
                   <input type="date" class="date end--date" />
                 </div>
               </div>
@@ -355,7 +339,7 @@
                 >
                 <textarea
                   class="input education-description"
-                  name="about"
+                  type="text"
                   placeholder="განათლების აღწერა"
                 ></textarea>
               </div>
@@ -369,12 +353,14 @@
             </div>
             <div class="btn-container">
               <button class="btn back-second-btn">უკან</button>
-              <button type="submit" class="btn finish-btn">დასრულება</button>
+              <button type="submit" id="myButton" class="btn finish-btn">
+                დასრულება
+              </button>
             </div>
           </div>
         </form>
       </div>
-      <div class="right">
+      <div class="right right-page-border">
         <div class="header-display-container">
           <div class="container">
             <div class="full-name">
@@ -445,8 +431,10 @@
           <img src="assets/images/icons/star-logo.svg" alt="star-logo" />
         </div>
       </div>
+      <div class="modal">
+        <p class="modal-text">რეზიუმე წარმატებით გაიგზავნა 🎉</p>
+      </div>
     </div>
-    <!-- <script src="app.js"></script> -->
     <script src="personalinfo.js"></script>
     <script src="experience.js"></script>
     <script src="education.js"></script>

@@ -18,7 +18,10 @@ let educationDisplay = document.querySelectorAll(
 let qualityDisplay = document.querySelectorAll(".quality-display");
 const previousSecondBtn = document.querySelector(".back-second-btn");
 const addBtn = document.querySelector(".another-school-btn");
-
+let educationsData =
+  (localStorage.getItem("data") &&
+    JSON.parse(localStorage.getItem("data")).educations) ||
+  {};
 //მესამე გვერდიდან მეორეზე დაბრუნება
 function backSecondPage(e) {
   e.preventDefault();
@@ -45,7 +48,11 @@ function schoolValidation(school, index) {
       schoolInvalidIcon[index].classList.remove("show");
     }
     school.style.outline = "none";
-    localStorage.setItem("school" + index, school.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    data.educations[index].institute = school.value;
+    localStorage.setItem("data", JSON.stringify(data));
     return true;
   } else {
     if (school && school.classList.contains("valid")) {
@@ -66,31 +73,32 @@ function schoolValidation(school, index) {
     if (school) {
       school.style.outline = "none";
     }
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    delete data.educations[index].institute;
+    localStorage.setItem("data", JSON.stringify(data));
     return false;
   }
 }
 for (let i = 0; i < schoolInput.length; i++) {
-  const schoolValue = localStorage.getItem("school" + i);
-  if (schoolValue) {
-    schoolInput[i].value = schoolValue;
+  let schoolValues = Object.values(educationsData).map(
+    (item) => item.institute
+  );
+  if (schoolValues[i]) {
+    schoolInput[i].value = schoolValues[i];
     schoolValidation(schoolInput[i], i);
   }
 }
 schoolInput.forEach((school, index) => {
-  const schoolValue = localStorage.getItem("school" + index);
-  if (schoolValue) {
-    schoolInput[index].value = schoolValue;
-    schoolValidation(schoolInput[index], index);
-  }
-
   school.addEventListener("input", () => {
     schoolValidation(school, index);
-    localStorage.setItem("school" + index, school.value);
   });
-
   school.addEventListener("change", () => {
     if (school.value === "") {
-      localStorage.removeItem("school" + index);
+      const data = JSON.parse(localStorage.getItem("data"));
+      delete data.educations[index].institute;
+      localStorage.setItem("data", JSON.stringify(data));
     }
   });
 });
@@ -108,42 +116,39 @@ function qualityValidation() {
         .closest(".select-container")
         .querySelector(".quality-label").style.color = "#000000";
       quality.style.outline = "none";
-      localStorage.setItem("select" + index, quality.value);
+      const data = JSON.parse(localStorage.getItem("data")) || {};
+      data.educations = data.educations || [];
+      data.educations[index] = data.educations[index] || {};
+      data.educations[index].degree_order = quality.value;
+      data.educations[index].degree_id = quality.selectedIndex;
+      localStorage.setItem("data", JSON.stringify(data));
       valid = true;
-    } /*else {
-      quality.classList.remove("valid");
-      quality.classList.add("invalid");
-      quality
-        .closest(".select-container")
-        .querySelector(".quality-label").style.color = "#e52f2f";
-      quality.style.outline = "none";
-      valid = false;
-      
-    }*/
+    }
   });
   return valid;
 }
-for (let i = 0; i < qualityInp.length; i++) {
-  const qualityValue = localStorage.getItem("select" + i);
-  if (qualityValue) {
-    qualityInp[i].value = qualityValue;
-    qualityValidation(qualityInp[i], i);
-    setQuality.call(qualityInp[i], qualityValue);
-  }
-}
 qualityInp.forEach((quality, index) => {
-  const qualityValue = localStorage.getItem("select" + index);
-  if (qualityValue) {
-    qualityInp[index].value = qualityValue;
-    qualityValidation(qualityInp[index], index);
-  }
-
   quality.addEventListener("input", () => {
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    data.educations[index].degree_order = quality.value;
+    data.educations[index].degree_id = quality.selectedIndex;
+    localStorage.setItem("data", JSON.stringify(data));
+
     qualityValidation(quality, index);
-    localStorage.setItem("select" + index, quality.value);
   });
 });
-// form.addEventListener("change", qualityValidation);
+// Update the values when populating the form
+for (let i = 0; i < qualityInp.length; i++) {
+  const educationData = educationsData[i];
+  if (educationData) {
+    qualityInp[i].value = educationData.degree_order;
+    qualityInp[i].selectedIndex = educationData.degree_id;
+    qualityValidation(qualityInp[i], i);
+    setQuality.call(qualityInp[i], educationData.degree_order);
+  }
+}
 // დამთავრების თარიღის
 function addEventListenersToEndDates(endDateInput, endDateLabel, index) {
   endDateInput.max = new Date().toISOString().split("T")[0];
@@ -162,12 +167,19 @@ function addEventListenersToEndDates(endDateInput, endDateLabel, index) {
   });
   endDateInput.addEventListener("change", () => {
     checkEmpty();
-    localStorage.setItem("endDateInput-" + index, endDateInput.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    data.educations[index].due_date = endDateInput.value;
+    localStorage.setItem("data", JSON.stringify(data));
   });
   endDateInput.addEventListener("change", set_End_Date);
-  const stored_EndDate = localStorage.getItem("endDateInput-" + index);
-  if (stored_EndDate) {
-    endDateInput.value = stored_EndDate;
+  const storedData = JSON.parse(localStorage.getItem("data")) || {};
+  const storedEducations = storedData.educations || [];
+  const storedEducation = storedEducations[index] || {};
+  const storedEndDate = storedEducation.due_date || "";
+  if (storedEndDate) {
+    endDateInput.value = storedEndDate;
   }
   window.addEventListener("load", function () {
     if (endDateInput.value !== "") {
@@ -179,6 +191,18 @@ function addEventListenersToEndDates(endDateInput, endDateLabel, index) {
 }
 for (let i = 0; i < inputEndDate.length; i++) {
   addEventListenersToEndDates(inputEndDate[i], labelDate[i], i);
+}
+//თარიღის
+for (let i = 0; i < inputEndDate.length; i++) {
+  let endDateValues = Object.values(educationsData).map(
+    (item) => item.due_date
+  );
+  if (endDateValues[i]) {
+    displayendDate[i].innerHTML = "- " + " " + endDateValues[i];
+    labelDate[i].classList.add("show");
+    inputEndDate[i].value = endDateValues[i];
+  }
+  set_End_Date({ target: inputEndDate[i] });
 }
 addEventListenersToEndDates(
   inputEndDate[inputEndDate.length - 1],
@@ -195,7 +219,11 @@ function educationDescriptionValidation(education, index) {
     education.classList.remove("invalid");
     educationLabel[index] && (educationLabel[index].style.color = "#000000");
     education.style.outline = "none";
-    localStorage.setItem("education" + index, education.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    data.educations[index].description = education.value;
+    localStorage.setItem("data", JSON.stringify(data));
     return true;
   } else {
     if (education && education.classList.contains("valid")) {
@@ -208,32 +236,33 @@ function educationDescriptionValidation(education, index) {
     if (education) {
       education.style.outline = "none";
     }
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.educations = data.educations || [];
+    data.educations[index] = data.educations[index] || {};
+    delete data.educations[index].description;
+    localStorage.setItem("data", JSON.stringify(data));
     return false;
   }
 }
 for (let i = 0; i < educationInput.length; i++) {
-  const educationValue = localStorage.getItem("education" + i);
-  if (educationValue) {
-    educationInput[i].value = educationValue;
+  let descriptionValues = Object.values(educationsData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[i]) {
+    educationInput[i].value = descriptionValues[i];
     educationDescriptionValidation(educationInput[i], i);
   }
 }
 educationInput.forEach((description, index) => {
-  const educationValue = localStorage.getItem("education" + index);
-  if (educationValue) {
-    educationInput[index].value = educationValue;
+  let descriptionValues = Object.values(educationsData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[index]) {
+    educationInput[index].value = descriptionValues[index];
     educationDescriptionValidation(educationInput[index], index);
   }
-
   description.addEventListener("input", () => {
     educationDescriptionValidation(description, index);
-    localStorage.setItem("education" + index, description.value);
-  });
-
-  description.addEventListener("change", () => {
-    if (description.value === "") {
-      localStorage.removeItem("education" + index);
-    }
   });
 });
 descriptionLabels[0].addEventListener("change", () => {
@@ -245,8 +274,8 @@ function addMoreField() {
   const form = document.querySelector(".more-exp");
   if (form.children.length >= FIELDS_MAX) {
     const addButton = document.querySelector(".another-school-btn");
-    addButton.disabled = true; // disable the "Add More" button
-    return; // exit the function
+    addButton.disabled = true;
+    return;
   }
   const html = `<div class="form-container">
   <div class="input-field school-field">
@@ -262,7 +291,7 @@ function addMoreField() {
         alt="invalid icon"
       />
     </span>
-    <label class="label-top school-label" for="education"
+    <label class="label-top school-label" 
       >სასწავლებელი</label
     >
     <input
@@ -274,19 +303,32 @@ function addMoreField() {
   </div>
   <div class="select-container">
     <div class="input-field">
-      <label for="select" class="label-top quality-label"
+      <label  class="label-top quality-label"
         >ხარისხი</label
       >
       <select class="select" name="selected">
-        <option value="" disabled selected>აირჩიე ხარისხი</option>
-        <option value="სტუდენტი">სტუდენტი</option>
-        <option value="ბაკალავრი">ბაკალავრი</option>
-        <option value="მაგისტრი">მაგისტრი</option>
-        <option value="დოქტორი">დოქტორი</option>
+      <option value="" disabled selected>აირჩიე ხარისხი</option>
+      <option value="საშუალო სკოლის დიპლომი">
+        საშუალო სკოლის დიპლომი
+      </option>
+      <option value="ზოგადსაგანმანათლებლო დიპლომი">
+        ზოგადსაგანმანათლებლო დიპლომი
+      </option>
+      <option value="კოლეჯი(ხარისიხს გარეშე)">
+        კოლეჯი(ხარისიხს გარეშე)
+      </option>
+      <option value="სტუდენტი">სტუდენტი</option>
+      <option value="ბაკალავრი">ბაკალავრი</option>
+      <option value="მაგისტრი">მაგისტრი</option>
+      <option value="დოქტორი">დოქტორი</option>
+      <option value="ასოცირებული ხარისხი">
+        ასოცირებული ხარისხი
+      </option>
+      <option value="სხვა">სხვა</option>
       </select>
     </div>
     <div class="input-field right-date">
-      <label class="label-top date-label" for="date"
+      <label class="label-top date-label" 
         >დამთავრების რიცხვი</label
       >
       <input type="date" class="date end--date" />
@@ -295,7 +337,6 @@ function addMoreField() {
   <div class="input-field about-field">
     <label
       class="label-top education-description-label"
-      for="description"
       >აღწერა</label
     >
     <textarea
@@ -329,11 +370,14 @@ function addMoreField() {
   qualityInp.forEach((inp) => {
     inp.addEventListener("change", setQuality);
   });
+  educationsData =
+    (localStorage.getItem("data") &&
+      JSON.parse(localStorage.getItem("data")).educations) ||
+    {};
   const addButton = document.querySelector(".another-school-btn");
   addButton.disabled = form.children.length >= FIELDS_MAX;
   const lastIndex = educationInput.length - 1;
   const lastIndex_2 = schoolInput.length - 1;
-
   educationInput[lastIndex].addEventListener("input", () => {
     educationDescriptionValidation(
       educationInput[lastIndex],
@@ -341,34 +385,37 @@ function addMoreField() {
       educationInput
     );
   });
-
   schoolInput[lastIndex_2].addEventListener("input", () => {
     schoolValidation(schoolInput[lastIndex_2], lastIndex_2, schoolInput);
   });
-
+  //თარიღის
+  for (let i = 0; i < inputEndDate.length; i++) {
+    let endDateValues = Object.values(educationsData).map(
+      (item) => item.due_date
+    );
+    if (endDateValues[i]) {
+      displayendDate[i].innerHTML = "- " + " " + endDateValues[i];
+      labelDate[i].classList.add("show");
+      inputEndDate[i].value = endDateValues[i];
+    }
+    set_End_Date({ target: inputEndDate[i] });
+  }
   addEventListenersToEndDates(
     inputEndDate[inputEndDate.length - 1],
     labelDate[labelDate.length - 1],
     inputEndDate.length - 1
   );
-
   // სასწავლებლის
   schoolInput.forEach((school, index) => {
-    const schoolValue = localStorage.getItem("school" + index);
-    if (schoolValue) {
-      schoolInput[index].value = schoolValue;
+    let schoolValues = Object.values(educationsData).map(
+      (item) => item.institute
+    );
+    if (schoolValues[index]) {
+      schoolInput[index].value = schoolValues[index];
       schoolValidation(schoolInput[index], index);
     }
-
     school.addEventListener("input", () => {
       schoolValidation(school, index);
-      localStorage.setItem("school" + index, school.value);
-    });
-
-    school.addEventListener("change", () => {
-      if (school.value === "") {
-        localStorage.removeItem("school" + index);
-      }
     });
     school.addEventListener("keyup", () => {
       setSchool(index, schoolInput[index], displayGreyLine[index]);
@@ -387,9 +434,11 @@ function addMoreField() {
     }
   });
   for (let i = 0; i < schoolInput.length; i++) {
-    const schoolValue = localStorage.getItem("school" + i);
-    if (schoolValue) {
-      schoolInput[i].value = schoolValue;
+    let schoolValues = Object.values(educationsData).map(
+      (item) => item.institute
+    );
+    if (schoolValues[i]) {
+      schoolInput[i].value = schoolValues[i];
       if (schoolInput[i].value) {
         schoolInput[i].classList.add("blur");
       }
@@ -398,21 +447,15 @@ function addMoreField() {
   }
   // აღწერის
   educationInput.forEach((education, index) => {
-    const educationValue = localStorage.getItem("education" + index);
-    if (educationValue) {
-      educationInput[index].value = educationValue;
+    let descriptionValues = Object.values(educationsData).map(
+      (item) => item.description
+    );
+    if (descriptionValues[index]) {
+      educationInput[index].value = descriptionValues[index];
       educationDescriptionValidation(educationInput[index], index);
     }
-
     education.addEventListener("input", () => {
       educationDescriptionValidation(education, index);
-      localStorage.setItem("education" + index, education.value);
-    });
-
-    education.addEventListener("change", () => {
-      if (education.value === "") {
-        localStorage.removeItem("education" + index);
-      }
     });
     education.addEventListener("keyup", () => {
       set_Education_Description(
@@ -434,12 +477,27 @@ function addMoreField() {
     }
   });
   // ხარისხის
+  qualityInp.forEach((quality, index) => {
+    quality.addEventListener("input", () => {
+      const data = JSON.parse(localStorage.getItem("data")) || {};
+      data.educations = data.educations || [];
+      data.educations[index] = data.educations[index] || {};
+      data.educations[index].degree_order = quality.value;
+      data.educations[index].degree_id = quality.selectedIndex;
+      localStorage.setItem("data", JSON.stringify(data));
+
+      qualityValidation(quality, index);
+    });
+  });
+
+  // Update the values when populating the form
   for (let i = 0; i < qualityInp.length; i++) {
-    const qualityValue = localStorage.getItem("select" + i);
-    if (qualityValue) {
-      qualityInp[i].value = qualityValue;
+    const educationData = educationsData[i];
+    if (educationData) {
+      qualityInp[i].value = educationData.degree_order;
+      qualityInp[i].selectedIndex = educationData.degree_id;
       qualityValidation(qualityInp[i], i);
-      setQuality.call(qualityInp[i], qualityValue);
+      setQuality.call(qualityInp[i], educationData.degree_order);
     }
   }
   //////////////////////////////////////////////////////////
@@ -496,17 +554,17 @@ function setSchool(index, school) {
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
-    localStorage.setItem("school" + index, schoolValue);
   } else {
     displaySchool[index].classList.remove("show");
     displaySchool[index].innerHTML = "";
-    localStorage.removeItem("school" + index);
   }
 }
 for (let i = 0; i < schoolInput.length; i++) {
-  const schoolValue = localStorage.getItem("school" + i);
-  if (schoolValue) {
-    schoolInput[i].value = schoolValue;
+  let schoolValues = Object.values(educationsData).map(
+    (item) => item.institute
+  );
+  if (schoolValues[i]) {
+    schoolInput[i].value = schoolValues[i];
     if (schoolInput[i].value) {
       schoolInput[i].classList.add("blur");
     }
@@ -537,11 +595,9 @@ function setQuality(quality) {
     }
     displayGreyLine[index].classList.add("show");
     qualityDisplay[index].innerHTML = displayValue;
-    localStorage.setItem("select" + index, displayValue);
   } else {
     qualityDisplay[index].classList.remove("show");
     qualityDisplay[index].innerHTML = "";
-    localStorage.removeItem("select" + index);
   }
 }
 qualityInp.forEach((qualityInp) => {
@@ -551,7 +607,7 @@ qualityInp.forEach((qualityInp) => {
 function set_End_Date(e) {
   const index = Array.from(inputEndDate).indexOf(e.target);
   if (e.target.value.length > 1) {
-    // displayendDate[index].classList.add("show");
+    displayendDate[index].classList.add("show");
     labelDate[index].classList.add("show");
     displayendDate[index].innerHTML = e.target.value;
     if (displayGreyLine.length > index && displayGreyLine[index]) {
@@ -560,24 +616,22 @@ function set_End_Date(e) {
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
-    localStorage.setItem("endDateInput-" + index, e.target.value);
   } else {
-    // displayendDate[index].classList.remove("show");
     displayendDate[index].innerHTML = "";
-    localStorage.removeItem("endDateInput-" + index);
     labelDate[index].classList.remove("show");
   }
 }
-window.addEventListener("load", function () {
-  for (let i = 0; i < inputEndDate.length; i++) {
-    const stored_Value = localStorage.getItem("endDateInput-" + i);
-    if (stored_Value) {
-      inputEndDate[i].value = stored_Value;
-      labelDate[i].classList.add("show");
-      displayendDate[i].innerHTML = stored_Value;
-    }
+for (let i = 0; i < inputEndDate.length; i++) {
+  let endDateValues = Object.values(educationsData).map(
+    (item) => item.due_date
+  );
+  if (endDateValues[i]) {
+    displayendDate[i].innerHTML = "- " + " " + endDateValues[i];
+    labelDate[i].classList.add("show");
+    inputEndDate[i].value = endDateValues[i];
   }
-});
+  set_End_Date({ target: inputEndDate[i] });
+}
 inputEndDate.forEach(function (endDateInput) {
   endDateInput.addEventListener("change", () => {
     checkEmpty();
@@ -598,17 +652,17 @@ function set_Education_Description(index, education) {
     if (educationTitle.length > index && educationTitle[index]) {
       educationTitle[index].classList.add("show");
     }
-    localStorage.setItem("education" + index, educationValue);
   } else {
     educationDisplay[index].classList.remove("show");
     educationDisplay[index].innerHTML = "";
-    localStorage.removeItem("education" + index);
   }
 }
 for (let i = 0; i < educationInput.length; i++) {
-  const educationValue = localStorage.getItem("education" + i);
-  if (educationValue) {
-    educationInput[i].value = educationValue;
+  let descriptionValues = Object.values(educationsData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[i]) {
+    educationInput[i].value = descriptionValues[i];
     set_Education_Description(i, educationInput[i]);
   }
 }
@@ -631,3 +685,145 @@ function checkEmpty() {
     educationTitle.forEach((title) => title.classList.remove("show"));
   }
 }
+function initializeData() {
+  const form = document.getElementById("form");
+  const data = new FormData(form);
+  localStorage.setItem("data", JSON.stringify(data));
+}
+if (!localStorage.getItem("data")) {
+  initializeData();
+}
+const base64ImageToBlob = async () => {
+  const data = JSON.parse(localStorage.getItem("data"));
+  if (!data || !data["personalImage"] || !data["personalImage"]["type"]) {
+    throw new Error("Missing or invalid data");
+  }
+  const base64Image = data["personalImage"]["type"];
+  const resp = await fetch(base64Image);
+  return await resp.blob();
+};
+const convertLocalDataToFormData = async () => {
+  const data = JSON.parse(localStorage.getItem("data"));
+  if (!data || !data["personalImage"] || !data["personalImage"]["type"]) {
+    throw new Error("Missing or invalid data");
+  }
+  const resp = await fetch(data["personalImage"]["type"]);
+  const blob = await resp.blob();
+  const formData = new FormData();
+  formData.append("data", JSON.stringify(data));
+  formData.append("image", blob, data["personalImage"]["name"]);
+  formData.append("name", data.name);
+  formData.append("surname", data.surname);
+  formData.append("email", data.email);
+  formData.append("phone_number", data.phone_number);
+  formData.append("about_me", data.about_me);
+  data.educations.forEach((education, index) => {
+    formData.append(`educations[${index}][degree_id]`, education.degree_id);
+    formData.append(
+      `educations[${index}][degree_order]`,
+      education.degree_order
+    );
+    if (education.description !== undefined) {
+      formData.append(
+        `educations[${index}][description]`,
+        education.description
+      );
+    }
+    if (education.due_date !== undefined) {
+      formData.append(`educations[${index}][due_date]`, education.due_date);
+    }
+    if (education.institute !== undefined) {
+      formData.append(`educations[${index}][institute]`, education.institute);
+    }
+  });
+  data.experiences.forEach((experience, index) => {
+    formData.append(`experiences[${index}][position]`, experience.position);
+    formData.append(`experiences[${index}][start_date]`, experience.start_date);
+    formData.append(`experiences[${index}][due_date]`, experience.due_date);
+    formData.append(
+      `experiences[${index}][description]`,
+      experience.description
+    );
+    formData.append(`experiences[${index}][employer]`, experience.employer);
+  });
+  return formData;
+};
+const formEl = document.querySelector(".form");
+formEl.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  let isFormValid = true;
+  schoolInput.forEach((school, index) => {
+    let isValid = schoolValidation(school, index, schoolInput);
+    if (!isValid) {
+      isFormValid = false;
+    }
+  });
+  educationInput.forEach((description, index) => {
+    let isValid = educationDescriptionValidation(
+      description,
+      index,
+      educationInput
+    );
+    if (!isValid) {
+      isFormValid = false;
+    }
+  });
+  inputEndDate.forEach((endDateInput, index) => {
+    if (endDateInput.value.length === 0) {
+      endDateInput.classList.remove("valid");
+      endDateInput.classList.add("invalid");
+      labelDate[index].style.color = "#e52f2f";
+      endDateInput.style.outline = "none";
+      isFormValid = false;
+    } else {
+      endDateInput.classList.add("valid");
+      endDateInput.classList.remove("invalid");
+      labelDate[index].style.color = "#000000";
+      endDateInput.style.outline = "none";
+      isFormValid = true;
+    }
+  });
+  form.querySelectorAll(".select").forEach((quality, index) => {
+    if (quality.value.length == 0) {
+      quality.classList.remove("valid");
+      quality.classList.add("invalid");
+      quality
+        .closest(".select-container")
+        .querySelector(".quality-label").style.color = "#e52f2f";
+      quality.style.outline = "none";
+      isFormValid = false;
+    } else {
+      isFormValid = true;
+    }
+  });
+  if (isFormValid) {
+    try {
+      const requestBody = await convertLocalDataToFormData();
+      const response = await fetch(
+        "https://resume.redberryinternship.ge/api/cvs",
+        {
+          headers: {
+            Accept: "application/json",
+          },
+          method: "POST",
+          body: requestBody,
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        if (response.status === 201) {
+          rightPage.style.border = "0.8px solid #000000";
+          rightPage.classList.add("centered");
+          leftPage.style.display = "none";
+          modal.style.display = "block";
+          localStorage.clear();
+        }
+      } else {
+        console.log("Error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
+  }
+});

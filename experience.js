@@ -23,6 +23,10 @@ let descriptionDisplays = document.querySelectorAll(".description-display");
 let experienceContainer = document.querySelector(".experience_display");
 const nextSecondBtn = document.querySelector(".next-second-btn");
 const thirdPage = document.querySelector(".third-page");
+let experienceData =
+  (localStorage.getItem("data") &&
+    JSON.parse(localStorage.getItem("data")).experiences) ||
+  {};
 // დაკლიკებით შემდეგ მეორე გვერდიდან მესამეზე გადასვლა თუ ვალიდურია
 nextSecondBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -108,7 +112,11 @@ function positionValidation(position, index) {
       positionInvalidIcon[index].classList.remove("show");
     }
     position.style.outline = "none";
-    localStorage.setItem("position" + index, position.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    data.experiences[index].position = position.value;
+    localStorage.setItem("data", JSON.stringify(data));
     return true;
   } else {
     if (position && position.classList.contains("valid")) {
@@ -129,41 +137,41 @@ function positionValidation(position, index) {
     if (position) {
       position.style.outline = "none";
     }
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    delete data.experiences[index].position;
+    localStorage.setItem("data", JSON.stringify(data));
     return false;
   }
 }
 for (let i = 0; i < positionInput.length; i++) {
-  const positionValue = localStorage.getItem("position" + i);
-  if (positionValue) {
-    positionInput[i].value = positionValue;
+  let positionValues = Object.values(experienceData).map(
+    (item) => item.position
+  );
+  if (positionValues[i]) {
+    positionInput[i].value = positionValues[i];
     positionValidation(positionInput[i], i);
   }
 }
 positionInput.forEach((position, index) => {
-  const positionValue = localStorage.getItem("position" + index);
-  if (positionValue) {
-    positionInput[index].value = positionValue;
-    positionValidation(positionInput[index], index);
-  }
-
   position.addEventListener("input", () => {
     positionValidation(position, index);
-    localStorage.setItem("position" + index, position.value);
   });
-
   position.addEventListener("change", () => {
     if (position.value === "") {
-      localStorage.removeItem("position" + index);
+      const data = JSON.parse(localStorage.getItem("data"));
+      delete data.experiences[index].position;
+      localStorage.setItem("data", JSON.stringify(data));
     }
   });
 });
-
 positionLabel[0].addEventListener("change", () => {
   positionValidation(positionInput[0], 0);
 });
 
 //დამსაქმებლის ვალიდაცია
-function employerValidation(employer, index, allEmployer) {
+function employerValidation(employer, index) {
   if (employer && employer.value && employer.value.length >= 2) {
     employer.classList.add("valid");
     if (employer.classList.contains("invalid")) {
@@ -179,7 +187,11 @@ function employerValidation(employer, index, allEmployer) {
       employerInvalidIcon[index].classList.remove("show");
     }
     employer.style.outline = "none";
-    localStorage.setItem("employer" + index, employer.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    data.experiences[index].employer = employer.value;
+    localStorage.setItem("data", JSON.stringify(data));
     return true;
   } else {
     if (employer && employer.classList.contains("valid")) {
@@ -200,13 +212,20 @@ function employerValidation(employer, index, allEmployer) {
     if (employer) {
       employer.style.outline = "none";
     }
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    delete data.experiences[index].employer;
+    localStorage.setItem("data", JSON.stringify(data));
     return false;
   }
 }
 for (let i = 0; i < employerInput.length; i++) {
-  const employerValue = localStorage.getItem("employer" + i);
-  if (employerValue) {
-    employerInput[i].value = employerValue;
+  let employerValues = Object.values(experienceData).map(
+    (item) => item.employer
+  );
+  if (employerValues[i]) {
+    employerInput[i].value = employerValues[i];
     employerValidation(employerInput[i], i);
   }
 }
@@ -217,7 +236,6 @@ employerInput.forEach((employer, index) => {
     });
   }
 });
-
 employerLabel[0].addEventListener("change", () => {
   employerValidation(employerInput[0], 0);
 });
@@ -246,7 +264,11 @@ function addEventListenersToDates(
   });
   startDateInput.addEventListener("change", () => {
     checkAllEmpty();
-    localStorage.setItem("startDateInput_" + index, startDateInput.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    data.experiences[index].start_date = startDateInput.value;
+    localStorage.setItem("data", JSON.stringify(data));
   });
   startDateInput.addEventListener("change", setStartDate);
   endDateInput.max = new Date().toISOString().split("T")[0];
@@ -270,15 +292,23 @@ function addEventListenersToDates(
   });
   endDateInput.addEventListener("change", () => {
     checkAllEmpty();
-    localStorage.setItem("endDateInput_" + index, endDateInput.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    data.experiences[index].due_date = endDateInput.value;
+    localStorage.setItem("data", JSON.stringify(data));
   });
   endDateInput.addEventListener("change", setEndDate);
   // Retrieve stored values
-  const storedStartDate = localStorage.getItem("startDateInput_" + index);
+  const storedData = JSON.parse(localStorage.getItem("data")) || {};
+  const storedExperiences = storedData.experiences || [];
+  const storedExperience = storedExperiences[index] || {};
+  const storedStartDate = storedExperience.start_date || "";
+  const storedEndDate = storedExperience.due_date || "";
+
   if (storedStartDate) {
     startDateInput.value = storedStartDate;
   }
-  const storedEndDate = localStorage.getItem("endDateInput_" + index);
   if (storedEndDate) {
     endDateInput.value = storedEndDate;
   }
@@ -324,7 +354,11 @@ function descriptionValidation(description, index) {
       descriptionLabels[index].style.color = "#000000";
     }
     description.style.outline = "none";
-    localStorage.setItem("description" + index, description.value);
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    data.experiences[index].description = description.value;
+    localStorage.setItem("data", JSON.stringify(data));
     return true;
   } else {
     if (description && description.classList.contains("valid")) {
@@ -339,32 +373,33 @@ function descriptionValidation(description, index) {
     if (description) {
       description.style.outline = "none";
     }
+    const data = JSON.parse(localStorage.getItem("data")) || {};
+    data.experiences = data.experiences || [];
+    data.experiences[index] = data.experiences[index] || {};
+    delete data.experiences[index].description;
+    localStorage.setItem("data", JSON.stringify(data));
     return false;
   }
 }
 for (let i = 0; i < descriptions.length; i++) {
-  const descriptionValue = localStorage.getItem("description" + i);
-  if (descriptionValue) {
-    descriptions[i].value = descriptionValue;
+  let descriptionValues = Object.values(experienceData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[i]) {
+    descriptions[i].value = descriptionValues[i];
     descriptionValidation(descriptions[i], i);
   }
 }
 descriptions.forEach((description, index) => {
-  const descriptionValue = localStorage.getItem("description" + index);
-  if (descriptionValue) {
-    descriptions[index].value = descriptionValue;
+  let descriptionValues = Object.values(experienceData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[index]) {
+    descriptions[index].value = descriptionValues[index];
     descriptionValidation(descriptions[index], index);
   }
-
   description.addEventListener("input", () => {
     descriptionValidation(description, index);
-    localStorage.setItem("description" + index, description.value);
-  });
-
-  description.addEventListener("change", () => {
-    if (description.value === "") {
-      localStorage.removeItem("description" + index);
-    }
   });
 });
 descriptionLabels[0].addEventListener("change", () => {
@@ -377,8 +412,8 @@ function add_more_field() {
   const form = document.querySelector(".moreExp");
   if (form.children.length >= MAX_FIELDS) {
     const addButton = document.querySelector(".more-experience-btn");
-    addButton.disabled = true; // disable the "Add More" button
-    return; // exit the function
+    addButton.disabled = true;
+    return;
   }
   const html = `<div class="form-container">
  <div class="input-field">
@@ -394,7 +429,7 @@ function add_more_field() {
        alt="invalid-icon"
      />
    </span>
-   <label class="label-top label-position" for="position-input"
+   <label class="label-top label-position"
      >თანამდებობა</label
    >
    <input
@@ -417,7 +452,7 @@ function add_more_field() {
        alt="invalid-icon"
      />
    </span>
-   <label class="label-top label-employer" for="employer-input"
+   <label class="label-top label-employer" 
      >დამსაქმებელი</label
    >
    <input
@@ -429,7 +464,7 @@ function add_more_field() {
  </div>
  <div class="date-container">
    <div class="input-field left-date">
-     <label class="label-top label-start-date" for="start_date"
+     <label class="label-top label-start-date" 
        >დაწყების რიცხვი</label
      >
      <input
@@ -438,7 +473,7 @@ function add_more_field() {
      />
    </div>
    <div class="input-field right-date">
-     <label class="label-top label-end-date" for="end_date"
+     <label class="label-top label-end-date" 
        >დამთავრების რიცხვი</label
      >
      <input
@@ -448,7 +483,7 @@ function add_more_field() {
    </div>
  </div>
  <div class="input-field about-field">
-   <label class="label-top label-description" for="description"
+   <label class="label-top label-description" 
      >აღწერა</label
    >
    <textarea
@@ -482,6 +517,10 @@ function add_more_field() {
   endDateLabels = document.querySelectorAll(".label-end-date");
   startDateDisplay = document.querySelectorAll(".date-start-display");
   endDateDisplay = document.querySelectorAll(".date-end-display");
+  experienceData =
+    (localStorage.getItem("data") &&
+      JSON.parse(localStorage.getItem("data")).experiences) ||
+    {};
   const addButton = document.querySelector(".more-experience-btn");
   addButton.disabled = form.children.length >= MAX_FIELDS;
   const lastIndex = descriptions.length - 1;
@@ -491,14 +530,13 @@ function add_more_field() {
   descriptions[lastIndex].addEventListener("input", () => {
     descriptionValidation(descriptions[lastIndex], lastIndex, descriptions);
   });
-
   positionInput[lastIndex_2].addEventListener("input", () => {
     positionValidation(positionInput[lastIndex_2], lastIndex_2, positionInput);
   });
-
   employerInput[lastIndex_3].addEventListener("input", () => {
     employerValidation(employerInput[lastIndex_3], lastIndex_3, employerInput);
   });
+  //თარიღის
   addEventListenersToDates(
     startDateInputs[startDateInputs.length - 1],
     endDateInputs[endDateInputs.length - 1],
@@ -506,23 +544,40 @@ function add_more_field() {
     endDateLabels[endDateLabels.length - 1],
     startDateInputs.length - 1 // pass the current index
   );
+  for (let i = 0; i < startDateInputs.length; i++) {
+    let startDateValues = Object.values(experienceData).map(
+      (item) => item.start_date
+    );
+    if (startDateValues[i]) {
+      startDateDisplay[i].innerHTML = startDateValues[i];
+      startDateLabels[i].classList.add("show");
+      startDateInputs[i].value = startDateValues[i];
+      displayLines[i].classList.add("show");
+    }
+    setStartDate({ target: startDateInputs[i] });
+  }
+  for (let i = 0; i < endDateInputs.length; i++) {
+    let endDateValues = Object.values(experienceData).map(
+      (item) => item.due_date
+    );
+    if (endDateValues[i]) {
+      endDateDisplay[i].innerHTML = "- " + " " + endDateValues[i];
+      endDateLabels[i].classList.add("show");
+      endDateInputs[i].value = endDateValues[i];
+    }
+    setEndDate({ target: endDateInputs[i] });
+  }
   // თანამდებობის
   positionInput.forEach((position, index) => {
-    const positionValue = localStorage.getItem("position" + index);
-    if (positionValue) {
-      positionInput[index].value = positionValue;
+    let positionValues = Object.values(experienceData).map(
+      (item) => item.position
+    );
+    if (positionValues[index]) {
+      positionInput[index].value = positionValues[index];
       positionValidation(positionInput[index], index);
     }
-
     position.addEventListener("input", () => {
       positionValidation(position, index);
-      localStorage.setItem("position" + index, position.value);
-    });
-
-    position.addEventListener("change", () => {
-      if (position.value === "") {
-        localStorage.removeItem("position" + index);
-      }
     });
     position.addEventListener("keyup", () => {
       setPosition(index, positionInput[index], displayLines[index]);
@@ -541,32 +596,26 @@ function add_more_field() {
     }
   });
   for (let i = 0; i < positionInput.length; i++) {
-    const positionValue = localStorage.getItem("position" + i);
-    if (positionValue) {
-      positionInput[i].value = positionValue;
+    positionValues = Object.values(experienceData).map((item) => item.position);
+    if (positionValues[i]) {
+      positionInput[i].value = positionValues[i];
       if (positionInput[i].value) {
-        positionInput[i].classList.add("blur"); // Add the blur class to non-empty elements
+        positionInput[i].classList.add("blur");
       }
-      setPosition(i, positionInput[i]); // Call setPosition with the stored value
+      setPosition(i, positionInput[i]);
     }
   }
   //დამსაქმებლის
   employerInput.forEach((employer, index) => {
-    const employerValue = localStorage.getItem("employer" + index);
-    if (employerValue) {
-      employerInput[index].value = employerValue;
+    let employerValues = Object.values(experienceData).map(
+      (item) => item.employer
+    );
+    if (employerValues[index]) {
+      employerInput[index].value = employerValues[index];
       employerValidation(employerInput[index], index);
     }
-
     employer.addEventListener("input", () => {
       employerValidation(employer, index);
-      localStorage.setItem("employer" + index, employer.value);
-    });
-
-    employer.addEventListener("change", () => {
-      if (employer.value === "") {
-        localStorage.removeItem("employer" + index);
-      }
     });
     employer.addEventListener("keyup", () => {
       setEmployer(index, employerInput[index], displayLines[index]);
@@ -582,21 +631,15 @@ function add_more_field() {
   });
   // აღწერის
   descriptions.forEach((description, index) => {
-    const descriptionValue = localStorage.getItem("description" + index);
-    if (descriptionValue) {
-      descriptions[index].value = descriptionValue;
+    let descriptionValues = Object.values(experienceData).map(
+      (item) => item.description
+    );
+    if (descriptionValues[index]) {
+      descriptions[index].value = descriptionValues[index];
       descriptionValidation(descriptions[index], index);
     }
-
     description.addEventListener("input", () => {
       descriptionValidation(description, index);
-      localStorage.setItem("description" + index, description.value);
-    });
-
-    description.addEventListener("change", () => {
-      if (description.value === "") {
-        localStorage.removeItem("description" + index);
-      }
     });
     description.addEventListener("keyup", () => {
       setDescription(index, descriptions[index], displayLines[index]);
@@ -616,12 +659,10 @@ function add_more_field() {
     localStorage.setItem("functionCalls", JSON.stringify(previousCalls));
   }
 }
-
 addButton.addEventListener("click", () => {
   buttonClicked = true;
   add_more_field();
 });
-
 // Retrieve the stored function calls on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function (event) {
   const previousCalls = JSON.parse(localStorage.getItem("functionCalls"));
@@ -666,21 +707,21 @@ function setPosition(index, position) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
-    localStorage.setItem("position" + index, positionValue); // Store value in localStorage
   } else {
     displayPosition[index].classList.remove("show");
     displayPosition[index].innerHTML = "";
-    localStorage.removeItem("position" + index); // Remove value from localStorage if validation fails
   }
 }
 for (let i = 0; i < positionInput.length; i++) {
-  const positionValue = localStorage.getItem("position" + i);
-  if (positionValue) {
-    positionInput[i].value = positionValue;
+  let positionValues = Object.values(experienceData).map(
+    (item) => item.position
+  );
+  if (positionValues[i]) {
+    positionInput[i].value = positionValues[i];
     if (positionInput[i].value) {
-      positionInput[i].classList.add("blur"); // Add the blur class to non-empty elements
+      positionInput[i].classList.add("blur");
     }
-    setPosition(i, positionInput[i]); // Call setPosition with the stored value
+    setPosition(i, positionInput[i]);
   }
 }
 positionInput.forEach((position, index) => {
@@ -705,18 +746,18 @@ function setEmployer(index, employer) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
-    localStorage.setItem("employer" + index, employerValue);
   } else {
     displayEmployer[index].classList.remove("show");
     displayEmployer[index].innerHTML = "";
-    localStorage.removeItem("employer" + index);
   }
 }
 for (let i = 0; i < employerInput.length; i++) {
-  const employerValue = localStorage.getItem("employer" + i);
-  if (employerValue) {
-    employerInput[i].value = employerValue;
-    setEmployer(i, employerInput[i]); // Call setPosition with the stored value
+  let employerValues = Object.values(experienceData).map(
+    (item) => item.employer
+  );
+  if (employerValues[i]) {
+    employerInput[i].value = employerValues[i];
+    setEmployer(i, employerInput[i]);
   }
 }
 employerInput.forEach((employer, index) => {
@@ -737,24 +778,23 @@ function setStartDate(e) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
-
-    localStorage.setItem("startDateInput_" + index, e.target.value);
   } else {
     startDateLabels[index].classList.remove("show");
     startDateDisplay[index].innerHTML = "";
-    localStorage.removeItem("startDateInput_" + index);
   }
 }
-window.addEventListener("load", function () {
-  for (let i = 0; i < startDateInputs.length; i++) {
-    const storedValue = localStorage.getItem("startDateInput_" + i);
-    if (storedValue) {
-      startDateDisplay[i].innerHTML = storedValue;
-      startDateLabels[i].classList.add("show");
-      startDateInputs[i].value = storedValue;
-    }
+for (let i = 0; i < startDateInputs.length; i++) {
+  let startDateValues = Object.values(experienceData).map(
+    (item) => item.start_date
+  );
+  if (startDateValues[i]) {
+    startDateDisplay[i].innerHTML = startDateValues[i];
+    startDateLabels[i].classList.add("show");
+    startDateInputs[i].value = startDateValues[i];
+    displayLines[i].classList.add("show");
   }
-});
+  setStartDate({ target: startDateInputs[i] });
+}
 startDateInputs.forEach(function (startDateInput) {
   startDateInput.addEventListener("change", () => {
     checkAllEmpty();
@@ -768,23 +808,29 @@ function setEndDate(e) {
   const index = Array.from(endDateInputs).indexOf(e.target);
   if (e.target.value.length > 1) {
     endDateDisplay[index].innerHTML = "- " + " " + e.target.value;
-    localStorage.setItem("endDateInput_" + index, e.target.value);
+    endDateLabels[index].classList.add("show");
+    if (displayLines.length > index && displayLines[index]) {
+      displayLines[index].classList.add("show");
+    }
+    if (experinceTitles.length > index && experinceTitles[index]) {
+      experinceTitles[index].classList.add("show");
+    }
   } else {
     endDateDisplay[index].innerHTML = "";
     endDateLabels[index].classList.remove("show");
-    localStorage.removeItem("endDateInput_" + index);
   }
 }
-window.addEventListener("load", function () {
-  for (let i = 0; i < endDateInputs.length; i++) {
-    const storedValue = localStorage.getItem("endDateInput_" + i);
-    if (storedValue) {
-      endDateDisplay[i].innerHTML = "- " + " " + storedValue;
-      endDateLabels[i].classList.add("show");
-      endDateInputs[i].value = storedValue;
-    }
+for (let i = 0; i < endDateInputs.length; i++) {
+  let endDateValues = Object.values(experienceData).map(
+    (item) => item.due_date
+  );
+  if (endDateValues[i]) {
+    endDateDisplay[i].innerHTML = "- " + " " + endDateValues[i];
+    endDateLabels[i].classList.add("show");
+    endDateInputs[i].value = endDateValues[i];
   }
-});
+  setEndDate({ target: endDateInputs[i] });
+}
 endDateInputs.forEach(function (endDateInput) {
   endDateInput.addEventListener("change", () => {
     checkAllEmpty();
@@ -805,17 +851,17 @@ function setDescription(index, description) {
     if (experinceTitles.length > index && experinceTitles[index]) {
       experinceTitles[index].classList.add("show");
     }
-    localStorage.setItem("description" + index, descriptionValue);
   } else {
     descriptionDisplays[index].classList.remove("show");
     descriptionDisplays[index].innerHTML = "";
-    localStorage.removeItem("description" + index);
   }
 }
 for (let i = 0; i < descriptions.length; i++) {
-  const descriptionValue = localStorage.getItem("description" + i);
-  if (descriptionValue) {
-    descriptions[i].value = descriptionValue;
+  let descriptionValues = Object.values(experienceData).map(
+    (item) => item.description
+  );
+  if (descriptionValues[i]) {
+    descriptions[i].value = descriptionValues[i];
     setDescription(i, descriptions[i]);
   }
 }
@@ -833,9 +879,7 @@ function checkAllEmpty() {
     ...endDateInputs,
     ...descriptions,
   ];
-
   const allEmpty = allInputs.every((input) => input.value.length < 2);
-
   if (allEmpty) {
     displayLines.forEach((line) => line.classList.remove("show"));
     experinceTitles.forEach((title) => title.classList.remove("show"));
