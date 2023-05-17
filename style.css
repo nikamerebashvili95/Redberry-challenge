@@ -455,7 +455,8 @@ select:focus {
   line-height: 22px;
   text-transform: lowercase;
   color: #000000;
-  word-break: break-all;
+
+  overflow-wrap: break-word;
 }
 .grey-line {
   width: 100%;
