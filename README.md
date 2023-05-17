@@ -5,6 +5,7 @@
 
 - [Overview](#overview)
   - [The challenge](#the-challenge)
+  - [Screenshots](#screenshots)
   - [Links](#links)
 - [My process](#my-process)
   - [Built with](#built-with)
@@ -23,7 +24,14 @@ Enterred data should not be lost when refreshed
 The design should be completed on one resolutions:
 - Desktop (1920x1080)
 
+### Screenshots
 
+![](./assets/screen/1.png)
+![](./assets/screen/2.png)
+![](./assets/screen/3.png)
+![](./assets/screen/4.png)
+![](./assets/screen/5.png)
+![](./assets/screen/6.png)
 
 ### Links
 
