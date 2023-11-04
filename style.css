@@ -14,8 +14,7 @@ html {
 }
 body {
   font-family: "Helvetica Neue", Helvetica, sans-serif;
-  /* max-width: 1920px; */
-  min-width: 1920px;
+  max-width: 1920px;
   margin: 0 auto;
   width: 100%;
   background: #f9f9f9;
@@ -549,9 +548,4 @@ select:focus {
   font-size: 28px;
   line-height: 43px;
   color: #1a1a1a;
-}
-@media (min-width: 1920px) {
-  body {
-    max-width: 1920px;
-  }
 }
